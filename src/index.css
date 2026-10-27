@@ -455,6 +455,7 @@ making white button text inherit the dark ink color (~2:1 contrast).
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.35rem;
   min-height: 2rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
@@ -479,19 +480,75 @@ making white button text inherit the dark ink color (~2:1 contrast).
   z-index: var(--z-sticky);
   margin-inline: calc(var(--space-5) * -1);
   margin-top: auto;
-  padding: var(--space-4) var(--space-5)
+  margin-bottom: calc(var(--space-3) * -1);
+  padding: var(--space-3) var(--space-5)
     calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(
-    to top,
-    var(--surface-raised) 55%,
-    oklch(1 0 0 / 0.85) 78%,
-    oklch(1 0 0 / 0)
-  );
+  background: var(--surface-raised);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 16px -2px oklch(0.2 0.02 250 / 0.06);
 }
 
 .studio-card-surface {
   background: var(--surface-raised);
   border: 1px solid var(--border);
+}
+
+.studio-switch-group {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: 2px;
+  gap: 2px;
+}
+
+.studio-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.625rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: calc(var(--radius-md) - 2px);
+  border: none;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease-out,
+    color 0.15s ease-out;
+}
+
+.studio-switch-btn:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.studio-switch-btn.is-active {
+  background: var(--surface-raised);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.studio-switch-btn.is-active-on {
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.studio-dropzone {
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  transition:
+    border-color 0.15s ease-out,
+    background-color 0.15s ease-out;
+}
+
+.studio-dropzone.is-dragging {
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .studio-segment {
@@ -532,9 +589,9 @@ making white button text inherit the dark ink color (~2:1 contrast).
 
 @media (max-width: 1023px) {
   .studio-sticky-cta {
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border-strong);
     background: var(--surface-raised);
-    box-shadow: 0 -8px 18px oklch(0.2 0.02 250 / 0.08);
+    box-shadow: 0 -8px 20px oklch(0.2 0.02 250 / 0.08);
   }
 }
 

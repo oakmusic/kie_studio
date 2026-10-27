@@ -185,7 +185,7 @@ export function ModelSelect({
                 <span className="block truncate text-sm font-semibold text-[var(--text)]">
                   {selected.title}
                 </span>
-                <span className="mt-0.5 block truncate text-[10px] text-[var(--text-muted)]">
+                <span className="mt-0.5 block truncate text-xs text-[var(--text-muted)]">
                   {selected.useCase ?? selected.category} · {modelInputSummary(selected)} · {selected.provider}
                 </span>
               </span>
@@ -234,7 +234,7 @@ export function ModelSelect({
               </div>
             </div>
 
-            <ul className="max-h-[min(55vh,28rem)] overflow-y-auto p-1.5" aria-label="Model list">
+            <ul className="max-h-[min(40vh,20rem)] overscroll-contain overflow-y-auto p-1.5" aria-label="Model list">
               {options.length === 0 && (
                 <li className="px-3 py-8 text-center text-xs text-[var(--text-muted)]">
                   No matching models found
@@ -262,7 +262,7 @@ export function ModelSelect({
                         <span className="truncate text-xs font-semibold text-[var(--text)]">{model.title}</span>
                         {recent && <Clock3 size={11} className="shrink-0 text-[var(--text-muted)]" aria-label="Recently used" />}
                       </span>
-                      <span className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-[var(--text-muted)]">
+                      <span className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-[var(--text-muted)]">
                         <span>{model.useCase ?? model.category}</span>
                         <span>{modelInputSummary(model)}</span>
                         <span>{model.provider}</span>

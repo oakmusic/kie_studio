@@ -104,7 +104,7 @@ function ProviderPreferredModel({
   return (
     <div className="mt-2 grid gap-1.5">
       <label
-        className="text-[10px] font-medium text-[var(--text-muted)]"
+        className="text-xs font-medium text-[var(--text-muted)]"
         htmlFor={`llm-preferred-${provider.id}`}
       >
         Model for this provider
@@ -220,7 +220,7 @@ function CustomEndpointsEditor({
                   {' · '}
                   {endpoint.baseUrl}
                 </span>
-                <span className="mt-0.5 block truncate text-[10px] text-[var(--text-muted)]">
+                <span className="mt-0.5 block truncate text-xs text-[var(--text-muted)]">
                   Models: {endpoint.models.join(', ')}
                 </span>
               </span>
@@ -385,7 +385,7 @@ function DefaultModelSelect({ onSaved }: { onSaved: () => void }) {
           <Check size={14} className="shrink-0 text-[var(--success)]" aria-hidden />
         )}
       </div>
-      <p className="mt-1 text-[10px] text-[var(--text-muted)]">
+      <p className="mt-1 text-xs text-[var(--text-muted)]">
         Initial model used for new conversations. Can be changed per conversation.
       </p>
     </div>
@@ -482,12 +482,12 @@ function DeleteKeyButton({
     <Pressable
       type="button"
       aria-label="Delete saved key"
-      className="studio-btn w-auto px-2 py-0.5 text-[10px] text-[var(--danger)]"
+      className="studio-btn w-auto px-2 py-0.5 text-xs text-[var(--danger)]"
       scaleTo={0.96}
       disabled={mutation.isPending}
       onClick={() => mutation.mutate()}
     >
-      <Trash2 size={11} strokeWidth={2} aria-hidden />
+      <Trash2 size={13} strokeWidth={2} aria-hidden />
     </Pressable>
   )
 }

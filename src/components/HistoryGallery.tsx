@@ -13,6 +13,7 @@ import {
   Plus,
   Play,
   RotateCcw,
+  Sparkles,
   Video,
   X,
 } from 'lucide-react'
@@ -106,7 +107,7 @@ function GalleryImage({
         <span className="grid size-10 place-items-center rounded-full bg-[var(--border)] text-[var(--text-muted)]">
           <Clock size={18} aria-hidden />
         </span>
-        <span className="text-[10px] leading-relaxed text-[var(--text-muted)]">
+        <span className="text-xs leading-relaxed text-[var(--text-muted)]">
           Unable to load media
         </span>
       </div>
@@ -166,7 +167,7 @@ function DeferredVideo({
     <div className={`${className} relative`}>
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[var(--accent-soft)] p-3 text-center text-[var(--text-muted)]">
         <Video size={20} aria-hidden />
-        <span className="line-clamp-2 text-[10px] font-medium">
+        <span className="line-clamp-2 text-xs font-medium">
           {failed ? 'Unable to display preview' : fallbackLabel}
         </span>
       </div>
@@ -579,6 +580,9 @@ export function HistoryGallery({
       ) : items.length === 0 ? (
         <div className="flex flex-1 items-center justify-center px-6 py-16 text-center">
           <div className="max-w-sm">
+            <div className="mx-auto mb-4 grid size-12 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface-raised)] text-[var(--accent)] shadow-xs">
+              <Sparkles size={22} strokeWidth={1.75} aria-hidden />
+            </div>
             <p className="studio-empty-title">Nothing here yet</p>
             <p className="studio-empty-body">
               <span className="hidden lg:inline">
@@ -707,7 +711,7 @@ export function HistoryGallery({
                               {primaryMedia?.title ?? h.prompt ?? 'Generated Audio'}
                             </span>
                             {audioTracks.length > 1 && (
-                              <span className="relative text-[10px] text-[var(--text-muted)]">{audioTracks.length} candidates</span>
+                              <span className="relative text-xs text-[var(--text-muted)]">{audioTracks.length} candidates</span>
                             )}
                           </div>
                         ) : busy ? (
@@ -719,10 +723,10 @@ export function HistoryGallery({
                               <div className="text-xs font-semibold text-[var(--accent)]">
                                 Generating
                               </div>
-                              <div className="mt-0.5 text-[11px] font-medium text-[var(--text)]">
+                              <div className="mt-0.5 text-xs font-medium text-[var(--text)]">
                                 <ElapsedTimer createdAt={h.createdAt} />
                               </div>
-                              <div className="mt-0.5 text-[10px] text-[var(--text-muted)]">
+                              <div className="mt-0.5 text-xs text-[var(--text-muted)]">
                                 {stateLabel(h.state)}
                               </div>
                             </div>
@@ -733,7 +737,7 @@ export function HistoryGallery({
                               Failed
                             </span>
                             {h.failMsg && (
-                              <span className="line-clamp-3 text-[10px] text-[var(--text-muted)]">
+                              <span className="line-clamp-3 text-xs text-[var(--text-muted)]">
                                 {h.failMsg}
                               </span>
                             )}
@@ -743,16 +747,16 @@ export function HistoryGallery({
                             Unknown status
                           </div>
                         ) : (
-                          <div className="flex h-full items-center justify-center text-[11px] uppercase text-[var(--text-muted)]">
+                          <div className="flex h-full items-center justify-center text-xs uppercase text-[var(--text-muted)]">
                             {h.category}
                           </div>
                         )}
 
                         <div className="pointer-events-none absolute inset-x-0 bottom-0 studio-tile-scrim p-2">
-                          <div className="truncate text-[11px] font-medium text-[var(--on-scrim)]">
+                          <div className="truncate text-xs font-medium text-[var(--on-scrim)]">
                             {shortModel(h.model)}
                           </div>
-                          <div className="mt-0.5 flex items-center justify-between gap-1 text-[10px] text-[var(--on-scrim-muted)] tabular-nums">
+                          <div className="mt-0.5 flex items-center justify-between gap-1 text-xs text-[var(--on-scrim-muted)] tabular-nums">
                             <span>{relativeTime(h.createdAt)}</span>
                             <span className="flex shrink-0 items-center gap-1.5">
                               {typeof h.creditsConsumed === 'number' && (
@@ -762,7 +766,7 @@ export function HistoryGallery({
                           </div>
                         </div>
 
-                        <span className="absolute left-2 top-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-raised)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--text)]">
+                        <span className="absolute left-2 top-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-raised)] px-1.5 py-0.5 text-xs font-semibold text-[var(--text)]">
                           {h.category === 'image' ? 'Image' : h.category === 'video' ? 'Video' : 'Audio'}
                         </span>
 
@@ -822,7 +826,7 @@ export function HistoryGallery({
                           disabled={retryDisabled}
                           onClick={() => onRetry(h)}
                           scaleTo={0.96}
-                          className="rounded-[var(--radius-sm)] px-2 py-1 text-[10px] font-semibold text-[var(--danger)] disabled:opacity-50"
+                          className="rounded-[var(--radius-sm)] px-2 py-1 text-xs font-semibold text-[var(--danger)] disabled:opacity-50"
                         >
                           Retry
                         </Pressable>

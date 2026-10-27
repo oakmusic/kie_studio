@@ -404,7 +404,7 @@ export function HistorySheets({
                       <div key={asset.id ?? `text-${index}`} className="mb-5 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-4">
                         <div className="mb-2 flex items-center justify-between gap-2">
                           <span className="studio-label">{asset.title ?? 'Text'}</span>
-                          <button type="button" className="studio-btn px-2 py-1 text-[10px]" onClick={() => void navigator.clipboard.writeText(text)}>Copy</button>
+                          <button type="button" className="studio-btn px-2 py-1 text-xs" onClick={() => void navigator.clipboard.writeText(text)}>Copy</button>
                         </div>
                         <p className="whitespace-pre-wrap text-sm leading-7">{text}</p>
                       </div>
@@ -626,7 +626,7 @@ export function HistorySheets({
                           )}
                           <Pressable className={smallBtnClass} onClick={() => onQuickAction(active, asset, 'market-upscale')}>Upscale</Pressable>
                         </div>
-                        <details className="mt-2 text-[11px] text-[var(--text-muted)]">
+                        <details className="mt-2 text-xs text-[var(--text-muted)]">
                           <summary className="min-h-6 cursor-pointer py-1 font-medium text-[var(--accent)]">
                             More Actions
                           </summary>
@@ -647,7 +647,7 @@ export function HistorySheets({
                             {selectedAudioUrl && (
                               <Pressable className={smallBtnClass} onClick={() => onQuickAction(active, asset, 'lip-sync', { audioUrl: selectedAudioUrl })}>Lip-sync with Audio</Pressable>
                             )}
-                            {availableAudio.length > 0 && <p className="w-full text-[10px] text-[var(--text-muted)]">If video and audio durations differ, the model may truncate or loop. The form will be populated for your confirmation before submission.</p>}
+                            {availableAudio.length > 0 && <p className="w-full text-xs text-[var(--text-muted)]">If video and audio durations differ, the model may truncate or loop. The form will be populated for your confirmation before submission.</p>}
                           </div>
                         </details>
                       </div>
@@ -678,7 +678,7 @@ export function HistorySheets({
                     <span className="studio-label">Prompt</span>
                     <Pressable
                       onClick={() => void copyPrompt(fullPrompt(active)!)}
-                      className={`${smallBtnClass} text-[11px]`}
+                      className={`${smallBtnClass} text-xs`}
                       scaleTo={0.96}
                     >
                       {copied ? (
@@ -701,7 +701,7 @@ export function HistorySheets({
 
               <details className="mt-4 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-4">
                 <summary className="cursor-pointer text-xs font-semibold">API Details</summary>
-                <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[11px]">
+                <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs">
                   <dt className="text-[var(--text-muted)]">Task ID</dt>
                   <dd className="break-all font-mono">{active.taskId}</dd>
                   <dt className="text-[var(--text-muted)]">Provider</dt>
@@ -711,12 +711,12 @@ export function HistorySheets({
                 </dl>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <div>
-                    <div className="mb-1 flex items-center justify-between"><span className="studio-label">Request Parameters</span><button type="button" className="studio-btn px-2 py-1 text-[10px]" onClick={() => void navigator.clipboard.writeText(JSON.stringify(active.rawParam ?? active.input ?? {}, null, 2))}>Copy</button></div>
-                    <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-all rounded bg-[var(--bg)] p-2 text-[10px]">{JSON.stringify(active.rawParam ?? active.input ?? {}, null, 2)}</pre>
+                    <div className="mb-1 flex items-center justify-between"><span className="studio-label">Request Parameters</span><button type="button" className="studio-btn px-2 py-1 text-xs" onClick={() => void navigator.clipboard.writeText(JSON.stringify(active.rawParam ?? active.input ?? {}, null, 2))}>Copy</button></div>
+                    <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-all rounded bg-[var(--bg)] p-2 text-xs font-mono">{JSON.stringify(active.rawParam ?? active.input ?? {}, null, 2)}</pre>
                   </div>
                   <div>
-                    <div className="mb-1 flex items-center justify-between"><span className="studio-label">Raw Response</span><button type="button" className="studio-btn px-2 py-1 text-[10px]" onClick={() => void navigator.clipboard.writeText(JSON.stringify(active.rawResult ?? {}, null, 2))}>Copy</button></div>
-                    <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-all rounded bg-[var(--bg)] p-2 text-[10px]">{JSON.stringify(active.rawResult ?? {}, null, 2)}</pre>
+                    <div className="mb-1 flex items-center justify-between"><span className="studio-label">Raw Response</span><button type="button" className="studio-btn px-2 py-1 text-xs" onClick={() => void navigator.clipboard.writeText(JSON.stringify(active.rawResult ?? {}, null, 2))}>Copy</button></div>
+                    <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-all rounded bg-[var(--bg)] p-2 text-xs font-mono">{JSON.stringify(active.rawResult ?? {}, null, 2)}</pre>
                   </div>
                 </div>
               </details>
@@ -789,14 +789,14 @@ export function HistorySheets({
                     <div className="truncate text-xs font-semibold">
                       {shortModel(item.model)}
                     </div>
-                    <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)]">
+                    <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
                       <span>{relativeTime(item.createdAt)}</span>
                       {typeof item.creditsConsumed === 'number' && (
                         <span>−{item.creditsConsumed}</span>
                       )}
                     </div>
                     {fullPrompt(item) && (
-                      <p className="line-clamp-6 whitespace-pre-wrap break-words text-[11px] leading-relaxed text-[var(--text-muted)]">
+                      <p className="line-clamp-6 whitespace-pre-wrap break-words text-xs leading-relaxed text-[var(--text-muted)]">
                         {fullPrompt(item)}
                       </p>
                     )}

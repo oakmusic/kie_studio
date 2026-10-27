@@ -355,7 +355,7 @@ function AgentChatSession({
               </button>
             )}
           </div>
-          <p className="mt-1.5 text-[10px] text-[var(--text-muted)]">
+          <p className="mt-1.5 text-xs text-[var(--text-muted)]">
             {provider}/{model} · Generations consume kie.ai credits
           </p>
         </div>

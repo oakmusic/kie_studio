@@ -32,12 +32,12 @@ function FieldDescription({ field }: { field: FieldSchema }) {
   return (
     <>
       {description && (
-        <p className="mt-1 text-[11px] leading-snug text-[var(--text-muted)]">
+        <p className="mt-1 text-xs leading-snug text-[var(--text-muted)]">
           {description}
         </p>
       )}
       {shouldShowTechnicalDescription(field) && (
-        <details className="mt-1 text-[11px] text-[var(--text-muted)]">
+        <details className="mt-1 text-xs text-[var(--text-muted)]">
           <summary className="min-h-6 cursor-pointer py-1 font-medium text-[var(--accent)]">
             View specifications
           </summary>
@@ -64,7 +64,7 @@ function FieldLabel({
         {field.label}
         {field.required && <span className="ml-1 text-[var(--danger)]">*</span>}
         {(hint || constraint) && (
-          <span className="ml-2 text-[11px] font-normal text-[var(--text-muted)]">
+          <span className="ml-2 text-xs font-normal text-[var(--text-muted)]">
             {[hint, constraint].filter(Boolean).join(' · ')}
           </span>
         )}
@@ -100,12 +100,10 @@ function BooleanToggle({
   error?: string
   onChange: (next: boolean) => void
 }) {
-  const current = on ? 'true' : 'false'
-
   return (
-    <div className="py-3">
-      <div className="mb-2.5 flex items-center justify-between gap-3">
-        <div>
+    <div className="py-2.5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
           <div className="studio-label text-[var(--text)]" id={id}>
             {field.label}
             {field.required && (
@@ -114,63 +112,32 @@ function BooleanToggle({
           </div>
           <FieldDescription field={field} />
         </div>
-        <span
-          className={`rounded-[var(--radius-md)] px-2 py-0.5 font-mono text-[11px] font-bold tabular-nums ${
-            on
-              ? 'bg-[var(--accent)] text-[var(--on-accent)]'
-              : 'bg-[var(--text)] text-[var(--on-accent)]'
-          }`}
-          aria-live="polite"
+        <div
+          role="group"
+          aria-labelledby={id}
+          className="studio-switch-group shrink-0"
         >
-          Current: {current}
-        </span>
-      </div>
-      {/* Instant toggle without layout spring for high frequency inputs */}
-      <div
-        role="group"
-        aria-labelledby={id}
-        aria-describedby={`${id}-value`}
-        className="studio-segment"
-      >
-        <span id={`${id}-value`} className="sr-only">
-          Current value is {current}
-        </span>
-        <Pressable
-          disabled={disabled}
-          aria-pressed={!on}
-          aria-label="false"
-          onClick={() => onChange(false)}
-          scaleTo={0.96}
-          className={`studio-segment-item ${
-            !on ? '!text-[var(--on-accent)]' : ''
-          }`}
-        >
-          {!on && (
-            <span
-              className="absolute inset-0 z-0 bg-[var(--text)]"
-              aria-hidden
-            />
-          )}
-          <span className="relative z-10 font-mono">false</span>
-        </Pressable>
-        <Pressable
-          disabled={disabled}
-          aria-pressed={on}
-          aria-label="true"
-          onClick={() => onChange(true)}
-          scaleTo={0.96}
-          className={`studio-segment-item ${
-            on ? '!text-[var(--on-accent)]' : ''
-          }`}
-        >
-          {on && (
-            <span
-              className="absolute inset-0 z-0 bg-[var(--accent)]"
-              aria-hidden
-            />
-          )}
-          <span className="relative z-10 font-mono">true</span>
-        </Pressable>
+          <Pressable
+            disabled={disabled}
+            aria-pressed={!on}
+            aria-label="false"
+            onClick={() => onChange(false)}
+            scaleTo={0.96}
+            className={`studio-switch-btn ${!on ? 'is-active' : ''}`}
+          >
+            Off
+          </Pressable>
+          <Pressable
+            disabled={disabled}
+            aria-pressed={on}
+            aria-label="true"
+            onClick={() => onChange(true)}
+            scaleTo={0.96}
+            className={`studio-switch-btn ${on ? 'is-active-on' : ''}`}
+          >
+            On
+          </Pressable>
+        </div>
       </div>
       <FieldError message={error} />
     </div>
@@ -612,7 +579,7 @@ export function DynamicForm({
             onClick={() => setAdvancedOpen((current) => !current)}
           >
             <span>Advanced Settings</span>
-            <span className="text-[11px] font-normal text-[var(--text-muted)]">
+            <span className="text-xs font-normal text-[var(--text-muted)]">
               {advancedFields.length} {advancedFields.length === 1 ? 'item' : 'items'} · {showAdvanced ? 'Collapse' : 'Expand'}
             </span>
           </button>

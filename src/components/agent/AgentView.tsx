@@ -165,7 +165,7 @@ export function AgentView({ onOpenSettings }: { onOpenSettings?: () => void }) {
             {active && !isNewFlow ? active.title : 'Agent'}
           </h2>
           {active && !isNewFlow && (
-            <span className="studio-meta hidden max-w-[9rem] shrink truncate text-[10px] sm:inline">
+            <span className="studio-meta hidden max-w-[9rem] shrink truncate text-xs sm:inline">
               {active.provider}/{active.model}
             </span>
           )}
@@ -241,7 +241,7 @@ export function AgentView({ onOpenSettings }: { onOpenSettings?: () => void }) {
                       }`}
                     >
                       <span className="block truncate">{conversation.title}</span>
-                      <span className="mt-0.5 block truncate text-[10px] opacity-70">
+                      <span className="mt-0.5 block truncate text-xs opacity-70">
                         {conversation.provider}/{conversation.model}
                       </span>
                     </button>

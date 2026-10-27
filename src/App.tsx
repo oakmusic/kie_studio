@@ -640,11 +640,11 @@ export default function App() {
               )}
 
               <div className="studio-sticky-cta space-y-2">
-                <div className="flex items-center justify-between gap-2 text-[11px] text-[var(--text-muted)]">
-                  <span className="min-w-0 truncate font-medium text-[var(--text)]">
+                <div className="flex items-center justify-between gap-2 text-xs text-[var(--text-muted)]">
+                  <span className="min-w-0 truncate font-semibold text-[var(--text)]">
                     {selected.title}
                   </span>
-                  <span className="shrink-0 tabular-nums">
+                  <span className="shrink-0 font-medium tabular-nums">
                     {creditEstimate === null
                       ? 'No credit estimate'
                       : `~${creditEstimate} cr/run`}
@@ -653,24 +653,26 @@ export default function App() {
                 {formIssues.length > 0 && (
                   <button
                     type="button"
-                    className="block w-full cursor-pointer text-left text-[11px] leading-snug text-[var(--warning)] underline decoration-transparent underline-offset-2 hover:decoration-current"
+                    className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-[var(--radius-sm)] border border-[var(--warning)]/30 bg-[var(--warning)]/10 px-2.5 py-1.5 text-left text-xs font-medium leading-snug text-[var(--warning)] transition-colors hover:bg-[var(--warning)]/15"
                     onClick={() => {
                       setFieldErrors(currentFormErrors)
                       requestAnimationFrame(() => focusFirstFieldError(currentFormErrors))
                     }}
                   >
-                    Needs review: {formIssues.slice(0, 3).join(', ')}
-                    {formIssues.length > 3 ? ` +${formIssues.length - 3} more` : ''}
-                    <span className="ml-1">Go to first issue</span>
+                    <span className="truncate">
+                      Needs review: {formIssues.slice(0, 3).join(', ')}
+                      {formIssues.length > 3 ? ` +${formIssues.length - 3} more` : ''}
+                    </span>
+                    <span className="ml-1 shrink-0 font-semibold underline underline-offset-2">Go to first issue</span>
                   </button>
                 )}
                 <div className="flex items-center justify-between gap-2">
                   <div
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1.5"
                     role="group"
                     aria-label="Batch generation count"
                   >
-                    <span className="mr-1 text-[11px] text-[var(--text-muted)]">
+                    <span className="mr-1 text-xs font-medium text-[var(--text-muted)]">
                       Batch
                     </span>
                     {[1, 2, 3, 4].map((n) => (

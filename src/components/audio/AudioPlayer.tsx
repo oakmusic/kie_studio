@@ -158,7 +158,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
                 </Pressable>
               </div>
               <div className="mt-1 flex items-center gap-2">
-                <span className="w-9 text-right font-mono text-[10px] text-[var(--text-muted)]">{formatTime(currentTime)}</span>
+                <span className="w-10 text-right font-mono text-xs tabular-nums text-[var(--text-muted)]">{formatTime(currentTime)}</span>
                 <input
                   type="range"
                   min={0}
@@ -169,7 +169,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
                   className="min-w-0 flex-1 accent-[var(--accent)]"
                   aria-label="Playback position"
                 />
-                <span className="w-9 font-mono text-[10px] text-[var(--text-muted)]">{formatTime(duration || active.duration || 0)}</span>
+                <span className="w-10 font-mono text-xs tabular-nums text-[var(--text-muted)]">{formatTime(duration || active.duration || 0)}</span>
               </div>
             </div>
           </div>
