@@ -57,7 +57,7 @@ export function readAppVersion(): string {
 }
 
 /**
- * Compares two semver strings (e.g. "1.0.23" vs "1.0.22", or "v1.0.23" vs "1.0.22").
+ * Compares two semver strings (e.g. "1.0.24" vs "1.0.23", or "v1.0.24" vs "1.0.23").
  * Returns true if latest is strictly newer than current.
  */
 export function isNewerVersion(latest: string, current: string): boolean {

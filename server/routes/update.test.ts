@@ -83,9 +83,9 @@ describe('checkGitHubRelease', () => {
       json: async () => ({ message: 'Not Found' }),
     } as unknown as Response)
 
-    const result = await checkGitHubRelease('oakmusic/kie_studio', '1.0.22')
+    const result = await checkGitHubRelease('oakmusic/kie_studio', '1.0.23')
     expect(result.available).toBe(false)
-    expect(result.currentVersion).toBe('1.0.22')
+    expect(result.currentVersion).toBe('1.0.23')
   })
 
   it('returns available: true with downloadUrl when a newer release exists', async () => {
@@ -93,25 +93,25 @@ describe('checkGitHubRelease', () => {
       ok: true,
       status: 200,
       json: async () => ({
-        tag_name: 'v1.0.23',
-        name: 'v1.0.23 Spanish & English Release',
-        html_url: 'https://github.com/oakmusic/kie_studio/releases/tag/v1.0.23',
+        tag_name: 'v1.0.24',
+        name: 'v1.0.24 Spanish & English Release',
+        html_url: 'https://github.com/oakmusic/kie_studio/releases/tag/v1.0.24',
         body: 'Release notes here',
         published_at: '2026-10-27T10:00:00Z',
         assets: [
           {
             name: 'stable-win-x64-KIESTUDIO-Setup.exe',
-            browser_download_url: 'https://github.com/oakmusic/kie_studio/releases/download/v1.0.23/Setup.exe',
+            browser_download_url: 'https://github.com/oakmusic/kie_studio/releases/download/v1.0.24/Setup.exe',
           },
         ],
       }),
     } as unknown as Response)
 
-    const result = await checkGitHubRelease('oakmusic/kie_studio', '1.0.22')
+    const result = await checkGitHubRelease('oakmusic/kie_studio', '1.0.23')
     expect(result.available).toBe(true)
-    expect(result.version).toBe('v1.0.23')
-    expect(result.currentVersion).toBe('1.0.22')
-    expect(result.releaseUrl).toBe('https://github.com/oakmusic/kie_studio/releases/tag/v1.0.23')
+    expect(result.version).toBe('v1.0.24')
+    expect(result.currentVersion).toBe('1.0.23')
+    expect(result.releaseUrl).toBe('https://github.com/oakmusic/kie_studio/releases/tag/v1.0.24')
   })
 
   it('handles rate limits gracefully (403)', async () => {
@@ -122,7 +122,7 @@ describe('checkGitHubRelease', () => {
       json: async () => ({ message: 'API rate limit exceeded' }),
     } as unknown as Response)
 
-    await expect(checkGitHubRelease('oakmusic/kie_studio', '1.0.22')).rejects.toThrow(
+    await expect(checkGitHubRelease('oakmusic/kie_studio', '1.0.23')).rejects.toThrow(
       'GitHub API rate limit exceeded',
     )
   })

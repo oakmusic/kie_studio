@@ -42,6 +42,13 @@ export function knownInstallBinDirs(
   userData?: string,
 ): string[] {
   const out: string[] = []
+  if (env.STUDIO_BIN_DIR) {
+    addUnique(out, env.STUDIO_BIN_DIR)
+  }
+  if (env.STUDIO_APP_DIR) {
+    addUnique(out, join(env.STUDIO_APP_DIR, 'bin'))
+    addUnique(out, env.STUDIO_APP_DIR)
+  }
   if (userData) {
     addUnique(out, join(userData, 'app', 'bin'))
     addUnique(out, join(userData, 'bin'))

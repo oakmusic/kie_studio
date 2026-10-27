@@ -23,6 +23,15 @@ describe('knownInstallBinDirs', () => {
     )
     expect(bins).toContain(join('C:\\Users\\me\\AppData\\Local\\ai.kie.studio\\canary', 'app', 'bin'))
   })
+
+  it('includes STUDIO_BIN_DIR and STUDIO_APP_DIR when provided in env', () => {
+    const bins = knownInstallBinDirs({
+      STUDIO_BIN_DIR: 'D:\\Portable\\KIE STUDIO\\bin',
+      STUDIO_APP_DIR: 'D:\\Portable\\KIE STUDIO',
+    })
+    expect(bins).toContain('D:\\Portable\\KIE STUDIO\\bin')
+    expect(bins).toContain('D:\\Portable\\KIE STUDIO')
+  })
 })
 
 describe('ensureInstallWorkingDirectory', () => {

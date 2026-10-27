@@ -19,8 +19,30 @@ ensureInstallWorkingDirectory()
 // Persist the SQLite DB in the writable userData directory. This MUST be set
 // before the server modules load, because server/db/open.ts reads
 // STUDIO_DB_PATH at module-evaluation time.
-const userData = Utils.paths.userData
-mkdirSync(userData, { recursive: true })
+const binDir = process.cwd()
+const appDir = join(binDir, '..')
+const isRepoDev =
+  existsSync(join(binDir, 'electrobun.config.ts')) ||
+  existsSync(join(binDir, 'package.json'))
+
+const isPortable =
+  !isRepoDev &&
+  (process.env.STUDIO_PORTABLE === '1' ||
+    Boolean(process.env.STUDIO_PORTABLE_DIR) ||
+    existsSync(join(appDir, 'portable.flag')) ||
+    existsSync(join(binDir, 'portable.flag')))
+
+const portableDataDir = process.env.STUDIO_PORTABLE_DIR
+  ? join(process.env.STUDIO_PORTABLE_DIR, 'data')
+  : join(appDir, 'data')
+
+let userData = isPortable ? portableDataDir : Utils.paths.userData
+try {
+  mkdirSync(userData, { recursive: true })
+} catch {
+  userData = Utils.paths.userData
+  mkdirSync(userData, { recursive: true })
+}
 process.env.STUDIO_DB_PATH = join(userData, 'studio.db')
 
 // Per-boot token for the leftover internal agent HTTP API (loopback).
