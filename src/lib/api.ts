@@ -510,6 +510,12 @@ export async function openMediaFolder() {
 export interface UpdateCheckResult {
   available: boolean
   version?: string
+  currentVersion?: string
+  downloadUrl?: string
+  releaseUrl?: string
+  name?: string
+  releaseNotes?: string
+  publishedAt?: string
   downloaded?: boolean
 }
 
@@ -517,3 +523,4 @@ export async function checkForUpdate() {
   const res = await fetch(apiUrl('/api/update/check'), { method: 'POST' })
   return parseJson<{ data: UpdateCheckResult }>(res)
 }
+

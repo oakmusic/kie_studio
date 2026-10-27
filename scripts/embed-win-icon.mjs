@@ -42,11 +42,21 @@ if (!inner) {
 }
 
 const appDir = join(buildPlatformDir, inner)
-const launcherExe = join(appDir, 'bin', 'launcher.exe')
 const iconIco = join(root, 'assets', 'icon.ico')
 
-if (!existsSync(launcherExe)) {
-  console.warn(`[embed-win-icon] launcher.exe が見つかりません: ${launcherExe}`)
+let launcherTarget = join(appDir, 'bin', 'launcher.exe')
+let needsTempExt = false
+
+if (!existsSync(launcherTarget)) {
+  const noExt = join(appDir, 'bin', 'launcher')
+  if (existsSync(noExt)) {
+    launcherTarget = noExt
+    needsTempExt = true
+  }
+}
+
+if (!existsSync(launcherTarget)) {
+  console.warn(`[embed-win-icon] launcher が見つかりません: ${launcherTarget}`)
   process.exit(0)
 }
 if (!existsSync(iconIco)) {
@@ -57,7 +67,12 @@ if (!existsSync(iconIco)) {
 // --- 1. launcher.exe へアイコン/バージョン情報を埋め込み ---
 try {
   const { rcedit } = await import('rcedit')
-  await rcedit(launcherExe, {
+  const pathToPatch = needsTempExt ? `${launcherTarget}.exe` : launcherTarget
+  if (needsTempExt) {
+    cpSync(launcherTarget, pathToPatch)
+  }
+
+  await rcedit(pathToPatch, {
     icon: iconIco,
     'version-string': {
       FileDescription: 'KIE STUDIO',
@@ -68,7 +83,22 @@ try {
     'file-version': version,
     'product-version': version,
   })
-  console.log('[embed-win-icon] launcher.exe へアイコン/バージョン情報を埋め込み済み')
+
+  if (needsTempExt) {
+    cpSync(pathToPatch, launcherTarget)
+  }
+  console.log('[embed-win-icon] launcher へアイコン/バージョン情報を埋め込み済み')
+
+  // Setup.exe にもアイコンを埋め込み
+  const setupExes = readdirSync(buildPlatformDir).filter((f) => f.endsWith('.exe'))
+  for (const sExe of setupExes) {
+    try {
+      await rcedit(join(buildPlatformDir, sExe), { icon: iconIco })
+      console.log(`[embed-win-icon] ${sExe} へアイコン埋め込み済み`)
+    } catch {
+      // ignore
+    }
+  }
 } catch (err) {
   console.warn(`[embed-win-icon] rcedit 失敗（ビルドは続行）: ${err.message}`)
   process.exit(0)
@@ -86,6 +116,13 @@ if (!zstName) {
   process.exit(0)
 }
 
+const zigCandidates = [
+  join(root, 'node_modules', 'electrobun', 'dist-win-x64', 'zig-zstd.exe'),
+  join(root, 'installer', 'win', 'staging', 'bin', 'zig-zstd.exe'),
+  join(process.env.LOCALAPPDATA ?? '', 'ai.kie.studio', channel, 'app', 'bin', 'zig-zstd.exe'),
+]
+const zigZstd = zigCandidates.find(existsSync)
+
 const zstPath = join(resDir, zstName)
 const tmp = mkdtempSync(join(tmpdir(), 'kie-icon-repack-'))
 try {
@@ -93,49 +130,64 @@ try {
   try {
     execSync(`tar -xf "${zstPath}" -C "${tmp}"`, { stdio: 'pipe' })
   } catch {
-    const zigZstd = join(process.env.LOCALAPPDATA ?? '', 'ai.kie.studio', channel, 'app', 'bin', 'zig-zstd.exe')
-    if (!existsSync(zigZstd)) {
-      console.warn('[embed-win-icon] tar.zst 展開に失敗。再パッケージをスキップ。')
+    if (!zigZstd) {
+      console.warn('[embed-win-icon] tar.zst 展開に失敗し zig-zstd もありません。再パッケージをスキップ。')
       process.exit(0)
     }
     const tarFile = join(tmp, 'payload.tar')
-    execSync(`"${zigZstd}" -d "${zstPath}" -o "${tarFile}" -f`, { stdio: 'pipe' })
+    execSync(`"${zigZstd}" decompress -i "${zstPath}" -o "${tarFile}" --no-timing`, { stdio: 'pipe' })
     execSync(`tar -xf "${tarFile}" -C "${tmp}"`, { stdio: 'pipe' })
   }
 
-  // 展開されたツリー内の launcher.exe もパッチ済みで上書き
+  // 展開されたツリー内の launcher.exe へアイコン埋め込み
   const topEntries = readdirSync(tmp).filter((n) => n !== 'payload.tar')
   if (topEntries.length === 1) {
     const innerLauncher = join(tmp, topEntries[0], 'bin', 'launcher.exe')
     if (existsSync(innerLauncher)) {
-      cpSync(launcherExe, innerLauncher)
-      console.log('[embed-win-icon] tar.zst 内の launcher.exe をパッチ済みバイナリで置換')
+      try {
+        const { rcedit } = await import('rcedit')
+        await rcedit(innerLauncher, {
+          icon: iconIco,
+          'version-string': {
+            FileDescription: 'KIE STUDIO',
+            ProductName: 'KIE STUDIO',
+            CompanyName: 'KIE STUDIO',
+            OriginalFilename: 'launcher.exe',
+          },
+          'file-version': version,
+          'product-version': version,
+        })
+        console.log('[embed-win-icon] tar.zst 内の launcher.exe をパッチ済みバイナリで置換')
+      } catch (err) {
+        console.warn(`[embed-win-icon] tar.zst 内の launcher.exe へのアイコン埋め込み失敗: ${err.message}`)
+      }
     }
   }
 
   // 再圧縮（.tar.zst）
-  const repackSrc = topEntries.length === 1 ? join(tmp, topEntries[0]) : tmp
   const tarOut = join(tmp, 'repack.tar')
-  execSync(`tar -cf "${tarOut}" -C "${repackSrc}" .`, { stdio: 'pipe' })
+  if (topEntries.length === 1) {
+    execSync(`tar -cf "${tarOut}" -C "${tmp}" "${topEntries[0]}"`, { stdio: 'pipe' })
+  } else {
+    execSync(`tar -cf "${tarOut}" -C "${tmp}" .`, { stdio: 'pipe' })
+  }
 
-  // zstd 圧縮: zig-zstd（Electrobun 同梱）をプライマリ、tar.exe をフォールバックとする。
-  const zigZstd = join(process.env.LOCALAPPDATA ?? '', 'ai.kie.studio', channel, 'app', 'bin', 'zig-zstd.exe')
+  // zstd 圧縮: zig-zstd をプライマリ、tar.exe をフォールバックとする。
   let repacked = false
-  if (existsSync(zigZstd)) {
+  if (zigZstd) {
     try {
-      execSync(`"${zigZstd}" -c "${tarOut}" -o "${zstPath}" -f`, { stdio: 'pipe' })
+      execSync(`"${zigZstd}" compress -i "${tarOut}" -o "${zstPath}" --no-timing`, { stdio: 'pipe' })
       repacked = true
     } catch { /* フォールバックへ */ }
   }
   if (!repacked) {
     try {
-      // Windows 10 1803+ tar.exe (libarchive) は zstd 圧縮をサポートしている場合がある
       execSync(`tar -cf "${zstPath}" --zstd -C "${repackSrc}" .`, { stdio: 'pipe' })
       repacked = true
     } catch { /* 最終フォールバック */ }
   }
   if (!repacked) {
-    console.warn('[embed-win-icon] tar.zst 再圧縮に失敗。launcher.exe のみパッチ済み。')
+    console.warn('[embed-win-icon] tar.zst 再圧縮に失敗。')
   }
 
   // artifacts/ にも同名ファイルがあれば同期

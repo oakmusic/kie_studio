@@ -1,4 +1,4 @@
-import Electrobun, { BrowserWindow, Utils } from 'electrobun/bun'
+import { BrowserWindow, Utils } from 'electrobun/bun'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -101,40 +101,33 @@ new BrowserWindow({
   frame: { width: 1280, height: 832 },
 })
 
-// Non-blocking, best-effort update check. Silently skipped when no baseUrl is
-// configured (local builds) or when the updater API is unavailable.
-// Downloads the update so it is applied on next startup.
+// Non-blocking, best-effort update check querying GitHub releases for oakmusic/kie_studio.
 async function checkForUpdatesQuietly() {
   try {
-    const local = await Electrobun.Updater.getLocal()
-    if (!local?.baseUrl) return
-    const info = await Electrobun.Updater.checkForUpdate()
-    if (info?.updateAvailable) {
-      console.log(`[updater] update available: ${info.version ?? 'unknown'} — downloading…`)
-      await Electrobun.Updater.downloadUpdate()
-      console.log('[updater] download complete; will apply on next startup')
+    const { checkGitHubRelease } = await import('../../server/routes/update.ts')
+    const info = await checkGitHubRelease()
+    if (info?.available) {
+      console.log(
+        `[updater] New GitHub release available: ${info.version ?? ''} (current: ${info.currentVersion ?? ''})`,
+      )
+      if (info.downloadUrl) {
+        console.log(`[updater] Direct installer download: ${info.downloadUrl}`)
+      }
     }
   } catch (err) {
-    console.warn('[updater] update check skipped', err)
+    console.warn('[updater] quiet update check skipped', err)
   }
 }
 
 void checkForUpdatesQuietly()
 
 // Register the /api/update/check handler so the frontend SettingsSheet can
-// trigger an explicit update check + download from the UI.
+// trigger an explicit update check from the UI.
 registerUpdateHandler(async () => {
-  const local = await Electrobun.Updater.getLocal()
-  if (!local?.baseUrl) {
-    return { available: false }
-  }
-  const info = await Electrobun.Updater.checkForUpdate()
-  if (!info?.updateAvailable) {
-    return { available: false, version: info?.version }
-  }
-  await Electrobun.Updater.downloadUpdate()
-  return { available: true, version: info.version, downloaded: true }
+  const { checkGitHubRelease } = await import('../../server/routes/update.ts')
+  return await checkGitHubRelease()
 })
+
 
 process.on('exit', () => {
   try {

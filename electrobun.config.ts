@@ -19,6 +19,8 @@ export default {
       'dist/index.html': 'views/mainview/index.html',
       'dist/assets/': 'views/mainview/assets/',
       'dist/favicon.svg': 'views/mainview/favicon.svg',
+      'dist/favicon.ico': 'views/mainview/favicon.ico',
+      'dist/favicon.png': 'views/mainview/favicon.png',
     },
     asarUnpack: ['*.node', '*.dll', '*.dylib', '*.so'],
     watchIgnore: ['dist/**'],

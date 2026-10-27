@@ -23,11 +23,17 @@
 #define AppURL         "https://kie.ai"
 #define LauncherExe    "bin\launcher.exe"
 
+#if AppChannel == "stable"
+  #define DisplaySuffix ""
+#else
+  #define DisplaySuffix " (" + AppChannel + ")"
+#endif
+
 [Setup]
 AppId={#AppId}
 AppName={#AppName}
 AppVersion={#AppVersion}
-AppVerName={#AppName} {#AppVersion} ({#AppChannel})
+AppVerName={#AppName} {#AppVersion}{#DisplaySuffix}
 AppPublisher={#AppPublisher}
 AppPublisherURL={#AppURL}
 AppSupportURL={#AppURL}
@@ -43,7 +49,8 @@ OutputDir=..\..\release
 OutputBaseFilename={#AppChannel}-win-x64-KIESTUDIO-Setup
 SetupIconFile=..\..\assets\icon.ico
 UninstallDisplayIcon={app}\app.ico
-UninstallDisplayName={#AppName} ({#AppChannel})
+UninstallDisplayName={#AppName}{#DisplaySuffix}
+CreateUninstallRegKey=yes
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
@@ -55,6 +62,7 @@ ChangesEnvironment=no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
 
 [Tasks]

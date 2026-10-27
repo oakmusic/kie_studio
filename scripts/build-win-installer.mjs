@@ -54,17 +54,22 @@ try {
     // Windows 10 1803+ の tar.exe (libarchive) は zstd をネイティブ展開できる。
     execSync(`tar -xf "${zstPath}" -C "${tmp}"`, { stdio: 'inherit' })
   } catch {
-    // フォールバック: インストール済みアプリ同梱の zig-zstd で .tar に戻してから展開。
-    const zigZstd = join(process.env.LOCALAPPDATA ?? '', 'ai.kie.studio', channel, 'app', 'bin', 'zig-zstd.exe')
-    if (!existsSync(zigZstd)) throw new Error('[win-installer] tar 展開に失敗し、zig-zstd フォールバックも利用できません。')
+    const zigCandidates = [
+      join(root, 'node_modules', 'electrobun', 'dist-win-x64', 'zig-zstd.exe'),
+      join(process.env.LOCALAPPDATA ?? '', 'ai.kie.studio', channel, 'app', 'bin', 'zig-zstd.exe'),
+    ]
+    const zigZstd = zigCandidates.find(existsSync)
+    if (!zigZstd) throw new Error('[win-installer] tar 展開に失敗し、zig-zstd フォールバックも利用できません。')
     const tarFile = join(tmp, 'payload.tar')
-    execSync(`"${zigZstd}" -d "${zstPath}" -o "${tarFile}" -f`, { stdio: 'inherit' })
+    execSync(`"${zigZstd}" decompress -i "${zstPath}" -o "${tarFile}" --no-timing`, { stdio: 'inherit' })
     execSync(`tar -xf "${tarFile}" -C "${tmp}"`, { stdio: 'inherit' })
   }
 
   const topEntries = readdirSync(tmp).filter((n) => n !== 'payload.tar')
-  if (topEntries.length !== 1) throw new Error(`[win-installer] tar.zst のトップレベルが想定外です: ${topEntries.join(', ')}`)
-  const srcTree = join(tmp, topEntries[0])
+  const srcTree =
+    topEntries.length === 1 && statSync(join(tmp, topEntries[0])).isDirectory()
+      ? join(tmp, topEntries[0])
+      : tmp
 
   rmSync(stagingDir, { recursive: true, force: true })
   mkdirSync(stagingDir, { recursive: true })
@@ -131,6 +136,12 @@ try {
   const outExe = join(root, 'release', `${channel}-win-x64-KIESTUDIO-Setup.exe`)
   if (!existsSync(outExe)) throw new Error(`[win-installer] 成果物が見つかりません: ${outExe}`)
   console.log(`[win-installer] 完了: ${outExe}`)
+
+  const artifactsDir = join(root, 'artifacts')
+  if (existsSync(artifactsDir)) {
+    cpSync(outExe, join(artifactsDir, `${channel}-win-x64-KIESTUDIO-Setup.exe`), { force: true })
+    console.log(`[win-installer] artifacts/${channel}-win-x64-KIESTUDIO-Setup.exe へ同期済み`)
+  }
 } finally {
   rmSync(tmp, { recursive: true, force: true })
 }

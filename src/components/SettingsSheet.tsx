@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Check,
   Database,
+  Download,
+  ExternalLink,
   FolderOpen,
   KeyRound,
   RefreshCw,
@@ -11,6 +13,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { clearApiKey, checkForUpdate, fetchHealth, fetchSettings, openMediaFolder, saveApiKey, syncModels } from '../lib/api.ts'
+import type { UpdateCheckResult } from '../lib/api.ts'
 import type { QueryClient } from '@tanstack/react-query'
 import { Pressable } from './motion/Pressable.tsx'
 import { LlmSettingsSection } from './LlmSettingsSection.tsx'
@@ -113,23 +116,25 @@ function ApiKeyForm({
 }
 
 /**
- * アップデート確認ボタン。デスクトップ版の Updater API を叩き、
- * 確認中 → 結果（最新 / 新バージョンDL済み / エラー）を表示する。
+ * Update check button. Queries GitHub releases for oakmusic/kie_studio
+ * and displays status / direct download links.
  */
 function UpdateCheckButton() {
   const [status, setStatus] = useState<
-    'idle' | 'checking' | 'up-to-date' | 'downloaded' | 'error'
+    'idle' | 'checking' | 'up-to-date' | 'available' | 'error'
   >('idle')
+  const [result, setResult] = useState<UpdateCheckResult | null>(null)
   const [detail, setDetail] = useState<string | null>(null)
 
   async function handleCheck() {
     setStatus('checking')
     setDetail(null)
+    setResult(null)
     try {
       const { data } = await checkForUpdate()
-      if (data.available && data.downloaded) {
-        setStatus('downloaded')
-        setDetail(data.version ? `v${data.version}` : null)
+      setResult(data)
+      if (data.available) {
+        setStatus('available')
       } else {
         setStatus('up-to-date')
       }
@@ -144,7 +149,7 @@ function UpdateCheckButton() {
   const checking = status === 'checking'
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex flex-col items-end gap-1.5">
       <Pressable
         onClick={() => void handleCheck()}
         disabled={checking}
@@ -162,13 +167,39 @@ function UpdateCheckButton() {
       </Pressable>
       {status === 'up-to-date' && (
         <p className="text-xs text-[var(--text-muted)]" role="status">
-          You are up to date
+          You are up to date {result?.currentVersion ? `(v${result.currentVersion})` : `(v${APP_VERSION})`}
         </p>
       )}
-      {status === 'downloaded' && (
-        <p className="text-xs text-[var(--success,var(--accent))]" role="status">
-          {detail ?? 'New version'} downloaded — will apply on next launch
-        </p>
+      {status === 'available' && result && (
+        <div className="flex flex-col items-end gap-1.5">
+          <p className="text-xs font-medium text-[var(--success,var(--accent))]" role="status">
+            {result.version ?? 'New version'} available!
+          </p>
+          <div className="flex flex-wrap items-center justify-end gap-1.5">
+            {result.downloadUrl && (
+              <a
+                href={result.downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="studio-btn w-auto gap-1 border-[var(--accent)] bg-[var(--accent)]/10 px-2.5 py-1 text-xs text-[var(--accent)] hover:bg-[var(--accent)]/20"
+              >
+                <Download size={12} strokeWidth={2} aria-hidden />
+                Download Installer
+              </a>
+            )}
+            {result.releaseUrl && (
+              <a
+                href={result.releaseUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="studio-btn w-auto gap-1 px-2.5 py-1 text-xs hover:underline"
+              >
+                <ExternalLink size={12} strokeWidth={2} aria-hidden />
+                View Release
+              </a>
+            )}
+          </div>
+        </div>
       )}
       {status === 'error' && (
         <p className="text-xs text-[var(--danger)]" role="alert">
@@ -415,7 +446,7 @@ export function SettingsSheet({
           </div>
           {healthQuery.data?.isDesktop && (
             <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
-              The desktop version checks for updates on startup. If an update is available, it will be applied automatically on the next launch.
+              Checks for updates on GitHub (oakmusic/kie_studio). When a new version is available, you can download the installer directly.
             </p>
           )}
         </section>
