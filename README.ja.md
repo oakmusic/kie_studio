@@ -2,6 +2,14 @@
 
 [English](./README.md) | **日本語** | [中文](./README.zh.md)
 
+> [!NOTE]
+> **本リポジトリについて（英語版フォーク / 帰属表示）**:
+> 本リポジトリは、**[Masaki Ozeki (@ozekimasaki)](https://github.com/ozekimasaki)** 氏が開発された **[Kie Studio](https://github.com/ozekimasaki/kie_studio)** の英語翻訳およびWindows向けパッケージング（Inno Setupインストーラー／ポータブル版）フォークです。
+>
+> アプリケーションのすべてのアイデア、設計、実装、功績は原作者である **Masaki Ozeki 氏** に帰属します。
+> - 原作リポジトリ: [https://github.com/ozekimasaki/kie_studio](https://github.com/ozekimasaki/kie_studio)
+> - 原作者: [Masaki Ozeki (@ozekimasaki)](https://github.com/ozekimasaki)
+
 kie.ai の Market API と専用 workflow で **IMAGE / VIDEO / AUDIO** を扱う Studio。ブラウザ（Vite + React）でも、**Electrobun でパッケージした単一デスクトップアプリ**（Win/mac/Linux）でも動作する。
 
 > **免責事項**: KIE STUDIO は 100% 非公式のファンツールです。kie.ai とは一切の提携・承認・スポンサー関係はありません。記載されている製品名・ロゴ・ブランドは各権利者に帰属します。利用は自己責任でお願いします。
@@ -230,8 +238,13 @@ cli/                    # kiestudio CLI（Studio API クライアント。結果
 - 対応 provider / operation はカタログに定義された workflow に限る
 - エージェント向けの作業メモは [AGENTS.md](./AGENTS.md) を参照
 
+## クレジット・謝辞
+
+- **原作者・主設計者**: **[Masaki Ozeki (@ozekimasaki)](https://github.com/ozekimasaki)** — 原作 [ozekimasaki/kie_studio](https://github.com/ozekimasaki/kie_studio) の作者。アプリケーションの構想、アーキテクチャ、UI/UX、機能設計に関するすべての功績と栄誉は同氏に帰属します。
+- **英語ローカライズ・保守**: [oakmusic](https://github.com/oakmusic/kie_studio) — 英語UI翻訳、Windowsインストーラーおよびポータブル版のビルド・配布対応。
+
 ## ライセンス
 
-[GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html) — © 2025 KIE STUDIO contributors.
+[GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html) — Original work © 2025 Masaki Ozeki and KIE STUDIO contributors.
 
 本プロジェクトは非公式のファンツールです。GNU General Public License v3 以降の条件のもと、自由に使用・改変・再配布できます。詳細は [LICENSE](./LICENSE) を参照。`package.json` は `private: true` で、npm publish は無効化されています。

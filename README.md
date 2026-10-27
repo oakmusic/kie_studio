@@ -2,6 +2,16 @@
 
 **English** | [日本語](./README.ja.md) | [中文](./README.zh.md)
 
+> [!IMPORTANT]
+> **English Localization & Original Project Credit**
+> This repository is an **English-translated edition and distribution fork** of the open-source application **[Kie Studio](https://github.com/ozekimasaki/kie_studio)**, created by **[Masaki Ozeki (ozekimasaki)](https://github.com/ozekimasaki)**.
+>
+> **All credit, merit, architectural design, and core vision belong entirely to Masaki Ozeki.**
+> - **Original Repository**: [https://github.com/ozekimasaki/kie_studio](https://github.com/ozekimasaki/kie_studio)
+> - **Original Author & Creator**: [Masaki Ozeki (@ozekimasaki)](https://github.com/ozekimasaki)
+>
+> We express our immense gratitude to Masaki Ozeki for creating this exceptional studio for the AI creator community. This fork provides full English UI localization, English documentation, and Windows installer/portable distribution.
+
 A Studio for **IMAGE / VIDEO / AUDIO** generation powered by kie.ai's Market API and dedicated workflows. Runs both in the browser (Vite + React) and as a **single desktop app** packaged with Electrobun (Win/mac/Linux).
 
 > **Disclaimer**: KIE STUDIO is a 100% unofficial fan-made tool. It is not affiliated with, endorsed by, or sponsored by kie.ai. All product names, logos, and brands are property of their respective owners. Use at your own risk.
@@ -230,8 +240,13 @@ cli/                    # kiestudio CLI (Studio API client; results land in Gall
 - Supported providers / operations are limited to workflows defined in the catalog
 - For agent working notes see [AGENTS.md](./AGENTS.md)
 
+## Credits & Attribution
+
+- **Original Creator & Architect**: **[Masaki Ozeki (@ozekimasaki)](https://github.com/ozekimasaki)** — Author of the original [ozekimasaki/kie_studio](https://github.com/ozekimasaki/kie_studio). All merit, architectural innovation, workflow designs, and credit for the application belong to him.
+- **English Translation & Maintenance**: [oakmusic](https://github.com/oakmusic/kie_studio) — English localization, Windows portable/installer packaging, cross-language documentation, and update distribution.
+
 ## License
 
-[GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html) — © 2025 KIE STUDIO contributors.
+[GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html) — Original work © 2025 Masaki Ozeki and KIE STUDIO contributors.
 
 This project is an unofficial fan tool. You are free to use, modify, and redistribute it under the terms of the GNU General Public License v3 or later. See [LICENSE](./LICENSE) for full terms. `package.json` is `private: true`; npm publish is disabled.

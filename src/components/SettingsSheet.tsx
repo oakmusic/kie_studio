@@ -449,6 +449,35 @@ export function SettingsSheet({
               Checks for updates on GitHub (oakmusic/kie_studio). When a new version is available, you can download the installer directly.
             </p>
           )}
+
+          <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)]/50 p-3 text-xs leading-5 text-[var(--text-muted)]">
+            <p className="font-medium text-[var(--text)]">
+              English Edition & Attribution
+            </p>
+            <p className="mt-1">
+              This application is an English-translated edition and Windows distribution of{' '}
+              <a
+                href="https://github.com/ozekimasaki/kie_studio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-0.5 font-medium text-[var(--accent)] hover:underline"
+              >
+                Kie Studio
+                <ExternalLink size={10} className="inline opacity-80" aria-hidden />
+              </a>
+              , created by{' '}
+              <a
+                href="https://github.com/ozekimasaki"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-0.5 font-medium text-[var(--accent)] hover:underline"
+              >
+                Masaki Ozeki (@ozekimasaki)
+                <ExternalLink size={10} className="inline opacity-80" aria-hidden />
+              </a>
+              . All credit, merit, and recognition for the original architecture, design, and workflows belong entirely to Masaki Ozeki.
+            </p>
+          </div>
         </section>
 
         <div className="mt-5 flex justify-end">

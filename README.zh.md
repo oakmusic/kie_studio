@@ -2,6 +2,14 @@
 
 [English](./README.md) | [日本語](./README.ja.md) | **中文**
 
+> [!NOTE]
+> **关于本仓库（英文本地化分支与致谢）**：
+> 本仓库是 **[Masaki Ozeki (@ozekimasaki)](https://github.com/ozekimasaki)** 先生打造的开源项目 **[Kie Studio](https://github.com/ozekimasaki/kie_studio)** 的英文翻译版及 Windows 安装包/便携版分发分支。
+>
+> 本应用的全部创意构想、核心架构、workflow 设计及功劳完全归属于原作者 **Masaki Ozeki 先生**。
+> - 原作仓库：[https://github.com/ozekimasaki/kie_studio](https://github.com/ozekimasaki/kie_studio)
+> - 原作者：[Masaki Ozeki (@ozekimasaki)](https://github.com/ozekimasaki)
+
 基于 kie.ai Market API 和专用 workflow 的 **IMAGE / VIDEO / AUDIO** 创作工作室。既可在浏览器中运行（Vite + React），也可作为 **Electrobun 打包的单一桌面应用**（Win/mac/Linux）使用。
 
 > **免责声明**：KIE STUDIO 是 100% 非官方的粉丝工具，与 kie.ai 无任何隶属、认可或赞助关系。所有产品名称、标志和品牌均为其各自所有者的财产。使用风险自负。
@@ -230,8 +238,13 @@ cli/                    # kiestudio CLI（Studio API 客户端，结果进入 Ga
 - 支持的 provider / operation 仅限目录中定义的 workflow
 - 代理工作备注请参阅 [AGENTS.md](./AGENTS.md)
 
+## 致谢与署名
+
+- **原作者与主架构师**：**[Masaki Ozeki (@ozekimasaki)](https://github.com/ozekimasaki)** — 原作 [ozekimasaki/kie_studio](https://github.com/ozekimasaki/kie_studio) 的创作者。本应用的全部核心构想、架构设计、workflow 和功能实现的全部功劳与荣誉归其所有。
+- **英文本地化与维护**：[oakmusic](https://github.com/oakmusic/kie_studio) — 英文界面翻译、Windows 安装包与便携版构建及维护。
+
 ## 许可证
 
-[GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html) — © 2025 KIE STUDIO contributors.
+[GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html) — Original work © 2025 Masaki Ozeki and KIE STUDIO contributors.
 
-本项目为非官方粉丝工具。您可以根据 GNU General Public License v3 或更高版本的条款自由使用、修改和再分发。详见 [LICENSE](./LICENSE)。`package.json` 设为 `private: true`，npm publish 已禁用。
+本项目为非官方粉丝工具。您可以根据 GNU General Public License v3 或更高版本的条款自由使用、修改和再分发。详见 [LICENSE](./LICENSE) 。`package.json` 设为 `private: true`，npm publish 已禁用。

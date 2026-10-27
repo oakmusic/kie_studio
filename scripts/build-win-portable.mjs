@@ -150,6 +150,10 @@ try {
   Version: ${version} (${channel})
 =====================================================
 
+English translation & portable edition for Kie Studio.
+Original creator & author: Masaki Ozeki (https://github.com/ozekimasaki/kie_studio)
+All credit and merit for the original design and workflows belong to Masaki Ozeki.
+
 How to run:
   Double-click "KIE STUDIO.exe" (or "KIE STUDIO.cmd").
 
