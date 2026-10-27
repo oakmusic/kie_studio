@@ -31,7 +31,7 @@ describe('SubmissionQueue', () => {
       run: async () => 'accepted',
     })
     expect(queue.cancelUnsent()).toBe(1)
-    await expect(promise).rejects.toThrow('キャンセル')
+    await expect(promise).rejects.toThrow('Cancelled')
   })
 
   it('classifies rate, purchase, input and refunded errors', () => {

@@ -20,11 +20,11 @@ describe('resolveLanguageModel', () => {
   it('throws when a builtin key is missing', () => {
     vi.mocked(getLlmApiKey).mockReturnValue(null)
     expect(() => resolveLanguageModel('xai', 'grok-4.5')).toThrow(AgentModelError)
-    expect(() => resolveLanguageModel('xai', 'grok-4.5')).toThrow(/API キー/)
+    expect(() => resolveLanguageModel('xai', 'grok-4.5')).toThrow(/API key/i)
   })
 
   it('throws for an unknown provider id', () => {
-    expect(() => resolveLanguageModel('not-a-provider', 'm')).toThrow(/未知のプロバイダ/)
+    expect(() => resolveLanguageModel('not-a-provider', 'm')).toThrow(/unknown provider/i)
   })
 
   it('returns a language model when a builtin key is present', () => {

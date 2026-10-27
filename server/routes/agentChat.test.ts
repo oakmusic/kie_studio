@@ -38,7 +38,7 @@ describe('agent chat routes', () => {
     })
     expect(res.status).toBe(400)
     const json = (await res.json()) as { error: string }
-    expect(json.error).toMatch(/API キー/)
+    expect(json.error).toMatch(/API key/i)
   })
 
   it('GET messages for an unknown conversation is an empty list', async () => {

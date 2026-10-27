@@ -72,34 +72,34 @@ describe('HistoryGallery', () => {
 
   it('shows the empty state when there is no history', () => {
     renderGallery([])
-    expect(screen.getByText('まだ何もありません')).toBeInTheDocument()
-    expect(screen.getByText('まだ生成がありません')).toBeInTheDocument()
+    expect(screen.getByText('Nothing here yet')).toBeInTheDocument()
+    expect(screen.getByText('No generations yet')).toBeInTheDocument()
   })
 
   it('shows skeleton tiles instead of the empty state while loading', () => {
     renderGallery([], { loading: true })
     expect(
-      screen.getByRole('status', { name: '履歴を読み込んでいます' }),
+      screen.getByRole('status', { name: 'Loading history' }),
     ).toBeInTheDocument()
-    expect(screen.queryByText('まだ何もありません')).not.toBeInTheDocument()
+    expect(screen.queryByText('Nothing here yet')).not.toBeInTheDocument()
   })
 
   it('navigates to the create tab from the empty state', () => {
     const onGoCreate = vi.fn()
     renderGallery([], { onGoCreate })
-    fireEvent.click(screen.getByRole('button', { name: '作成タブを開く' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Go to Create' }))
     expect(onGoCreate).toHaveBeenCalledTimes(1)
   })
 
   it('resets filters from the no-match empty state', () => {
     renderGallery([imageItem()])
     fireEvent.change(
-      screen.getByRole('combobox', { name: '状態で絞り込み' }),
+      screen.getByRole('combobox', { name: 'Filter by status' }),
       { target: { value: 'fail' } },
     )
-    expect(screen.getByText('見つかりません')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: '絞り込みをリセット' }))
-    expect(screen.queryByText('見つかりません')).not.toBeInTheDocument()
+    expect(screen.getByText('No items found')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Reset filters' }))
+    expect(screen.queryByText('No items found')).not.toBeInTheDocument()
     expect(screen.getByAltText('a red fox')).toBeInTheDocument()
   })
 
@@ -115,16 +115,16 @@ describe('HistoryGallery', () => {
 
   it('summarizes count with pending generations in the header', () => {
     renderGallery([imageItem()], { pendingCount: 2 })
-    expect(screen.getByText('1 件 · 2 件生成中')).toBeInTheDocument()
+    expect(screen.getByText('1 items · 2 generating')).toBeInTheDocument()
   })
 
   it('exposes filter controls once history exists', () => {
     renderGallery([imageItem()])
     expect(
-      screen.getByRole('combobox', { name: 'カテゴリで絞り込み' }),
+      screen.getByRole('combobox', { name: 'Filter by category' }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('combobox', { name: '状態で絞り込み' }),
+      screen.getByRole('combobox', { name: 'Filter by status' }),
     ).toBeInTheDocument()
   })
 })

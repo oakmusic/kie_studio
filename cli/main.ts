@@ -54,9 +54,9 @@ function defaultSpawnServer(cwd: string): Promise<number> {
     child.on('error', (error) => {
       reject(
         new CliError(
-          `bun を起動できませんでした: ${error.message}`,
+          `Failed to start bun: ${error.message}`,
           1,
-          '  bun を PATH に入れたうえで kiestudio up を再実行してください',
+          '  Please ensure bun is in your PATH and rerun kiestudio up',
         ),
       )
     })
@@ -132,7 +132,7 @@ async function requireClient(io: CliIo): Promise<StudioClient> {
   })
   if (!base) {
     throw new CliError(
-      'Studio API が起動していません',
+      'Studio API is not running',
       1,
       '  kiestudio up\n  npm run dev',
     )
@@ -161,7 +161,7 @@ function parseFlagArgs<T extends NonNullable<ParseArgsConfig['options']>>(
     })
   } catch (error) {
     throw new CliError(
-      error instanceof Error ? error.message : '引数を解析できませんでした',
+      error instanceof Error ? error.message : 'Failed to parse arguments',
       1,
     )
   }
@@ -181,11 +181,11 @@ async function cmdUp(args: string[], io: CliIo): Promise<number> {
       io,
       wantsJson(args),
       { running: true, base: existing },
-      `API は既に起動しています: ${existing}`,
+      `API is already running: ${existing}`,
     )
     return 0
   }
-  io.stderr('Studio API を起動します (bun server/index.ts)')
+  io.stderr('Starting Studio API (bun server/index.ts)')
   return io.spawnServer(io.repoRoot)
 }
 
@@ -205,13 +205,13 @@ async function cmdOpen(args: string[], io: CliIo): Promise<number> {
   }
   const reachable = await webUiReachable(io)
   if (!reachable) {
-    io.stderr(`Web UI に接続できません (${WEB_UI})`)
+    io.stderr(`Cannot connect to Web UI (${WEB_UI})`)
     io.stderr('  npm run dev')
     return 1
   }
   const opened = await io.openUrl(WEB_UI)
   if (!opened) {
-    io.stderr(`ブラウザを開けませんでした。手動で開いてください: ${WEB_UI}`)
+    io.stderr(`Failed to open browser. Please open manually: ${WEB_UI}`)
     return 1
   }
   emit(io, wantsJson(args), { url: WEB_UI }, WEB_UI)
@@ -253,7 +253,7 @@ async function cmdModels(args: string[], io: CliIo): Promise<number> {
     category !== 'audio'
   ) {
     throw new CliError(
-      'category は image / video / audio のいずれかです',
+      'category must be one of: image, video, audio',
       1,
       '  kiestudio models --category image',
     )
@@ -292,13 +292,13 @@ export function resolveCatalogModel(
       .map((model) => `  ${model.id}  ${model.title}`)
       .join('\n')
     throw new CliError(
-      `モデルが複数ヒットしました: ${query}`,
+      `Multiple models matched: ${query}`,
       1,
-      `候補:\n${preview}\n  kiestudio models ${query}`,
+      `Candidates:\n${preview}\n  kiestudio models ${query}`,
     )
   }
   throw new CliError(
-    `モデルが見つかりません: ${query}`,
+    `Model not found: ${query}`,
     1,
     `  kiestudio models ${query}`,
   )
@@ -308,7 +308,7 @@ export function parseSetPair(raw: string): [string, unknown] {
   const eq = raw.indexOf('=')
   if (eq <= 0) {
     throw new CliError(
-      `--set は key=value 形式です: ${raw}`,
+      `--set must be in key=value format: ${raw}`,
       1,
       '  kiestudio generate -m <id> --set aspect_ratio=16:9',
     )
@@ -334,14 +334,14 @@ function buildInput(options: {
       parsed = JSON.parse(options.inputJson)
     } catch {
       throw new CliError(
-        '--input は JSON オブジェクトである必要があります',
+        '--input must be a JSON object',
         1,
         `  kiestudio generate -m <id> --input '{"prompt":"hi"}'`,
       )
     }
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
       throw new CliError(
-        '--input は JSON オブジェクトである必要があります',
+        '--input must be a JSON object',
         1,
         `  kiestudio generate -m <id> --input '{"prompt":"hi"}'`,
       )
@@ -392,7 +392,7 @@ async function waitForTask(
     await io.sleep(POLL_MS)
   }
   throw new CliError(
-    `タスクが時間内に終わりませんでした: ${params.taskId}`,
+    `Task did not complete in time: ${params.taskId}`,
     1,
     `  kiestudio status ${params.taskId} --wait`,
   )
@@ -424,7 +424,7 @@ async function cmdGenerate(args: string[], io: CliIo): Promise<number> {
   const modelQuery = parsed.values.model
   if (!modelQuery) {
     throw new CliError(
-      'モデル (-m) が必要です',
+      'Model (-m) is required',
       1,
       '  kiestudio generate -m flux-kontext-pro -p "a red bicycle"',
     )
@@ -440,7 +440,7 @@ async function cmdGenerate(args: string[], io: CliIo): Promise<number> {
   const missing = missingRequired(model, input)
   if (missing.length > 0) {
     throw new CliError(
-      `必須フィールドが不足しています: ${missing.join(', ')}`,
+      `Missing required fields: ${missing.join(', ')}`,
       1,
       `  kiestudio generate -m ${model.id} --input '{"${missing[0]}":"..."}'`,
     )
@@ -491,7 +491,7 @@ async function cmdStatus(args: string[], io: CliIo): Promise<number> {
   const taskId = parsed.positionals[0]
   if (!taskId) {
     throw new CliError(
-      'taskId が必要です',
+      'taskId is required',
       1,
       '  kiestudio status <taskId> --wait',
     )
@@ -533,7 +533,7 @@ async function cmdHistory(args: string[], io: CliIo): Promise<number> {
     category !== 'audio'
   ) {
     throw new CliError(
-      'category は image / video / audio のいずれかです',
+      'category must be one of: image, video, audio',
       1,
       '  kiestudio history --category image',
     )
@@ -581,7 +581,7 @@ export async function main(
         return await cmdHistory(rest, io)
       default:
         throw new CliError(
-          `不明なコマンドです: ${command}`,
+          `Unknown command: ${command}`,
           1,
           '  kiestudio --help',
         )

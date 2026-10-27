@@ -1,18 +1,18 @@
 # KIE STUDIO — Precision Light
 
-Skill 儀式の確定稿。実装はこの文書に従う。
+Finalized design specifications. Implementation must follow this document.
 
 ## Physical scene
 
-昼〜夕方のデスクライト下で、ローカル生成を繰り返すクリエイター。画面は作業台——右に結果、左に道具箱。暗いシネマやクリーム紙面は不採用。
+A creator working under daylight to evening desk lighting, running repeated local generation. The screen is a workbench — results on the right, toolbox on the left. Dark cinema and cream paper layouts are rejected.
 
 ## Color strategy: Restrained
 
-ニュートラル（ブランド hue へわずかに tint）+ アクセント ≤10%。
+Neutral (subtly tinted with brand hue) + Accent ≤10%.
 
-### Seed（impeccable OKLCH / palette.mjs 不在のため手動組成）
+### Seed (manually composed due to absence of impeccable OKLCH / palette.mjs)
 
-Brand hue ≈ 210（cool teal-ink）。「精密な編集室」——Apple Blue・AI 紫は使わない。
+Brand hue ≈ 210 (cool teal-ink). "Precision editing room" — avoid Apple Blue or AI purple.
 
 | Role | Token | OKLCH | Notes |
 |------|-------|-------|-------|

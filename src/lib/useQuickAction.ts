@@ -71,7 +71,7 @@ export function useQuickAction({
           style: typeof metadata.tags === 'string' ? metadata.tags : '',
           title: media.title ?? '',
           model: typeof metadata.modelName === 'string' ? metadata.modelName : 'V5',
-        }, '元の曲を引き継ぎました。内容を確認してから送信してください')
+        }, 'Original track imported. Please review details before submitting.')
         break
       case 'suno-replace-section':
         openWorkflow('audio', 'suno/replace-section', {
@@ -83,52 +83,52 @@ export function useQuickAction({
           tags: typeof metadata.tags === 'string' ? metadata.tags : '',
           title: media.title ?? 'Edited section',
           _duration: media.duration ?? 0,
-        }, '選択区間を引き継ぎました。置換内容を入力してから送信してください')
+        }, 'Selected section imported. Please enter replacement prompt before submitting.')
         break
       case 'suno-upload-extend':
         openWorkflow('audio', 'suno/upload-extend', {
           uploadUrl: url,
           continueAt: Math.max(0, (media.duration ?? 1) - 1),
           prompt: '',
-        }, '音源を引き継ぎました。続きを確認してから送信してください')
+        }, 'Audio track imported. Please check settings before submitting.')
         break
       case 'runway-aleph':
-        openWorkflow('video', 'runway/aleph', { _parentTaskId: item.taskId, videoUrl: url, prompt: '' }, '元動画を引き継ぎました。変更内容を入力してから送信してください')
+        openWorkflow('video', 'runway/aleph', { _parentTaskId: item.taskId, videoUrl: url, prompt: '' }, 'Source video imported. Please enter changes before submitting.')
         break
       case 'runway-extend':
         openWorkflow('video', 'runway/extend', {
           taskId: item.taskId,
           videoId: media.providerAssetId ?? '',
           prompt: '',
-        }, '元動画を引き継ぎました。延長内容を確認してから送信してください')
+        }, 'Source video imported. Please check extension settings before submitting.')
         break
       case 'veo-extend':
-        openWorkflow('video', 'veo/extend', { taskId: item.taskId, prompt: '' }, '元動画を引き継ぎました。延長内容を確認してから送信してください')
+        openWorkflow('video', 'veo/extend', { taskId: item.taskId, prompt: '' }, 'Source video imported. Please check extension settings before submitting.')
         break
       case 'veo-1080p':
-        openWorkflow('video', 'veo/1080p', { taskId: item.taskId, index: 0 }, '元タスクを引き継ぎました。確認後に1080p処理を送信してください')
+        openWorkflow('video', 'veo/1080p', { taskId: item.taskId, index: 0 }, 'Source task imported. Please review and submit 1080p processing.')
         break
       case 'veo-4k':
-        openWorkflow('video', 'veo/4k', { taskId: item.taskId, index: 0 }, '元タスクを引き継ぎました。確認後に4K処理を送信してください')
+        openWorkflow('video', 'veo/4k', { taskId: item.taskId, index: 0 }, 'Source task imported. Please review and submit 4K processing.')
         break
       case 'lip-sync':
         openWorkflow('video', 'market/volcengine-lip-sync', {
           video_url: url,
           audio_url: options.audioUrl,
-        }, '動画と音声を引き継ぎました。尺の扱いを確認してから送信してください')
+        }, 'Video and audio imported. Please verify duration alignment before submitting.')
         break
       case 'market-upscale':
         if (media.kind === 'video') {
-          openWorkflow('video', 'topaz/video-upscale', { video_url: url }, '元動画を引き継ぎました。倍率を確認してから送信してください')
+          openWorkflow('video', 'topaz/video-upscale', { video_url: url }, 'Source video imported. Please select upscale scale before submitting.')
         } else {
-          openWorkflow('image', 'topaz/image-upscale', { image_url: url }, '元画像を引き継ぎました。倍率を確認してから送信してください')
+          openWorkflow('image', 'topaz/image-upscale', { image_url: url }, 'Source image imported. Please select upscale scale before submitting.')
         }
         break
       case 'market-edit':
         if (media.kind === 'video') {
-          openWorkflow('video', 'wan/2-7-videoedit', { video_url: url, prompt: '' }, '元動画を引き継ぎました。編集内容を入力してから送信してください')
+          openWorkflow('video', 'wan/2-7-videoedit', { video_url: url, prompt: '' }, 'Source video imported. Please enter edit instructions before submitting.')
         } else {
-          openWorkflow('image', 'google/nano-banana-edit', { image_urls: [url], prompt: '' }, '元画像を引き継ぎました。編集内容を入力してから送信してください')
+          openWorkflow('image', 'google/nano-banana-edit', { image_urls: [url], prompt: '' }, 'Source image imported. Please enter edit instructions before submitting.')
         }
         break
       default: {

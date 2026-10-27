@@ -54,11 +54,11 @@ RestartApplications=no
 ChangesEnvironment=no
 
 [Languages]
-Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "デスクトップにショートカットを作成する"; GroupDescription: "追加のアイコン:"; Flags: checkedonce
+Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"; Flags: checkedonce
 
 [Files]
 ; ショートカット / ARP 表示用のアイコンを同梱（launcher.exe にはアイコンが無いため）。
@@ -73,7 +73,7 @@ Name: "{userprograms}\{#AppName}"; Filename: "{app}\{#LauncherExe}"; WorkingDir:
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#LauncherExe}"; WorkingDir: "{app}\bin"; IconFilename: "{app}\app.ico"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#LauncherExe}"; WorkingDir: "{app}\bin"; Description: "{#AppName} を起動する"; Flags: nowait postinstall skipifsilent runascurrentuser
+Filename: "{app}\{#LauncherExe}"; WorkingDir: "{app}\bin"; Description: "Launch {#AppName}"; Flags: nowait postinstall skipifsilent runascurrentuser
 
 ; インストール前に旧ツリー/残骸を掃除し、常に pristine な配置にする
 ; （自動アップデートで差し替わったファイルや Electrobun 純正の uninstall.reg を回収）。

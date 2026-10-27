@@ -23,7 +23,7 @@ function MediaView({ url, kind }: { url: string; kind: string }) {
   return (
     <img
       src={url}
-      alt="生成結果"
+      alt="Generated Result"
       referrerPolicy="no-referrer"
       className="max-h-72 w-full rounded-[var(--radius-md)] object-contain bg-black/20"
     />
@@ -36,8 +36,8 @@ export function AgentMediaTaskCard({ data }: { data: MediaTaskData }) {
       <div className="flex items-start gap-2 rounded-[var(--radius-md)] border border-[var(--danger)] bg-[var(--surface)] p-3 text-sm">
         <AlertTriangle size={16} className="mt-0.5 shrink-0 text-[var(--danger)]" aria-hidden />
         <div>
-          <p className="font-medium text-[var(--danger)]">生成に失敗しました</p>
-          <p className="mt-1 text-[var(--text-muted)]">{data.error ?? '不明なエラー'}</p>
+          <p className="font-medium text-[var(--danger)]">Generation failed</p>
+          <p className="mt-1 text-[var(--text-muted)]">{data.error ?? 'Unknown error'}</p>
         </div>
       </div>
     )
@@ -49,9 +49,9 @@ export function AgentMediaTaskCard({ data }: { data: MediaTaskData }) {
         <Loader2 size={16} className="animate-spin text-[var(--accent)]" aria-hidden />
         <div>
           <p className="font-medium text-[var(--text)]">
-            {data.title ?? '生成'} を開始しました
+            Started {data.title ?? 'generation'}
           </p>
-          <p className="mt-0.5 text-xs">進捗は履歴ギャラリーにも反映されます</p>
+          <p className="mt-0.5 text-xs">Progress is also tracked in the gallery</p>
         </div>
       </div>
     )
@@ -69,7 +69,7 @@ export function AgentMediaTaskCard({ data }: { data: MediaTaskData }) {
     <div className="rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] p-3">
       <p className="mb-2 flex items-center gap-1.5 text-sm font-medium text-[var(--success)]">
         <CheckCircle2 size={16} aria-hidden />
-        {data.title ?? '生成'} が完了しました
+        Completed {data.title ?? 'generation'}
       </p>
       <div className="grid gap-2">
         {mediaItems

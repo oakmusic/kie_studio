@@ -65,7 +65,7 @@ describe('workflow constraints', () => {
       operation: 'generate',
     }
     expect(validateWorkflowInput(model, { video_url: [], audio_url: [] }))
-      .toEqual({ video_url: '動画を1件選択してください', audio_url: '音声を1件選択してください' })
+      .toEqual({ video_url: 'Please select 1 video', audio_url: 'Please select 1 audio track' })
     expect(validateWorkflowInput(model, {
       video_url: ['https://cdn.example.com/v.mp4'],
       audio_url: ['https://cdn.example.com/a.mp3'],

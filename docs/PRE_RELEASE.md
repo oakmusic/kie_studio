@@ -1,76 +1,76 @@
-# Pre-release チェックリスト
+# Pre-release Checklist
 
-リリース（canary / stable）や大きめの PR マージ前に通す手順。エージェント作業の完了条件にも使う。
+Procedure to complete before releases (canary / stable) or major PR merges. Also used as completion criteria for agent tasks.
 
-## 1. コードゲート
+## 1. Code Gates
 
 ```bash
 npm run lint && npm test && npx tsc -b
 ```
 
-フロント／デスクトップを触った場合は必要に応じて:
+If modifying the frontend or desktop application, run production build as needed:
 
 ```bash
 npm run build
 ```
 
-## 2. 機能スモーク
+## 2. Functional Smoke Tests
 
-今回の変更面だけを手で確認する。例:
+Manually test areas affected by the changes. Examples:
 
-- エージェント Grok: Settings → LLM → xAI Grok に `XAI_API_KEY` を保存 → モデルピッカーに「xAI Grok」
-- プロンプト最適化の Grok CLI（`server/grok/`）は別経路。`grok login` または同じ `XAI_API_KEY`
+- Agent Grok: Settings → LLM → xAI Grok: save `XAI_API_KEY` → verify "xAI Grok" appears in model picker
+- Prompt optimization Grok CLI (`server/grok/`) uses a separate route: `grok login` or the same `XAI_API_KEY`
 
-## 3. UI/UX ゲート（崩れ・被り）
+## 3. UI/UX Quality Gate (Layout & Overlap)
 
-対象画面を目視する（狭い幅・各状態）:
+Visually inspect target screens (narrow viewports, different states):
 
-1. 要素の重なり・はみ出しがない
-2. シート／モーダル内でスクロールと折り返しが破綻しない
-3. ボタン群が重ならない
-4. SpringSheet / FloatingChrome など既存 chrome と z-index が競合しない
-5. [DESIGN.md](../DESIGN.md) 準拠（生 hex・glow・紫グラデ禁止、`var(--*)`）
+1. No element overlap or overflow
+2. Scrolling and line wrapping remain stable within sheets and modals
+3. Buttons do not collide or overlap
+4. No z-index conflicts with existing chrome like SpringSheet / FloatingChrome
+5. Adherence to [DESIGN.md](../DESIGN.md) (no raw hex, glow, or purple gradients; use `var(--*)`)
 
-問題があれば同 PR で直してから次へ進む。
+Fix any detected issues within the PR before proceeding.
 
-## 4. デスクトップ（任意）
+## 4. Desktop Testing (Optional)
 
 ```bash
 npm run desktop:dev
-# または canary ビルド
+# Or run a canary build
 ```
 
-Settings まで到達し、今回の UI が webview でも問題ないことを確認する。
+Verify that navigation reaches Settings and UI renders correctly inside the webview.
 
-## 5. 知識同期
+## 5. Knowledge Base Synchronization
 
-関係する indexion wiki を更新する（`.md` 直編集禁止 — `pages update` 経由）:
+Update relevant indexion wiki pages (do not edit `.md` files directly — use `pages update`):
 
 ```bash
 indexion wiki pages update --wiki-dir=.indexion/wiki ...
 indexion wiki lint --wiki-dir=.indexion/wiki
 ```
 
-## 6. 入口ドキュメント
+## 6. Entry Documentation
 
-実装と手順に合わせて更新する（詳細の正は wiki / 本ファイル）:
+Update entry documents to match the current implementation and procedures:
 
-1. [AGENTS.md](../AGENTS.md)（ディレクトリ・注意・Pre-release リンク）
-2. [README.md](../README.md) / [README.ja.md](../README.ja.md)（必要なら [README.zh.md](../README.zh.md)）
+1. [AGENTS.md](../AGENTS.md) (directories, notes, Pre-release links)
+2. [README.md](../README.md) / [README.ja.md](../README.ja.md) (and [README.zh.md](../README.zh.md) if needed)
 
-順序は **AGENTS → README**。横断で文言が食い違わないこと。
+The recommended update order is **AGENTS → README**, ensuring terminology is consistent across documents.
 
 ## 7. Git
 
-- コミットメッセージは日本語 conventional commits（[AGENTS.md](../AGENTS.md) 参照）
-- push / tag はユーザーが明示したときのみ
-- `v*-canary` 等は既存 `.github/workflows/release.yml` に従う
-- 同梱 catalog はタグ CI が docs.kie.ai から再同期する。手元で古い snapshot のまま bump してもよい
+- Commit messages follow conventional commits
+- Only push or tag when explicitly requested by the user
+- Tag formats like `v*-canary` follow `.github/workflows/release.yml`
+- Bundled catalog is re-synced from docs.kie.ai by release CI. Local version bumps may keep existing snapshot
 
-## 8. 禁止
+## 8. Prohibited Items
 
-次を成果物・コミットに含めない:
+Never include the following in build artifacts or commits:
 
-- `.env` / API キー
-- 旧 `data/grok-oauth/auth.json`（廃止済み。残っていてもコミットしない）
-- `*.db` / `*.key`
+- `.env` files / API keys
+- Legacy `data/grok-oauth/auth.json` (deprecated)
+- `*.db` / `*.key` files

@@ -84,7 +84,7 @@ describe('HistorySheets', () => {
   it('reuses the active item when its input can be restored', () => {
     const active = successItem()
     const { onReuse } = renderSheets({ active, showViewer: true })
-    fireEvent.click(screen.getByRole('button', { name: /設定ごと再利用/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Reuse Settings/i }))
     expect(onReuse).toHaveBeenCalledWith(
       expect.objectContaining({ taskId: 'task-1' }),
     )
@@ -93,7 +93,7 @@ describe('HistorySheets', () => {
   it('offers a retry for a failed item', () => {
     const active = successItem({ state: 'fail', failMsg: 'boom' })
     const { onRetry } = renderSheets({ active, showViewer: true })
-    fireEvent.click(screen.getByRole('button', { name: '同じ入力で再実行' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Retry with same input' }))
     expect(onRetry).toHaveBeenCalledWith(
       expect.objectContaining({ taskId: 'task-1' }),
     )

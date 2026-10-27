@@ -94,21 +94,21 @@ export function validateFields(
     const value = values[field.name]
 
     if (typeof value === 'string' && field.maxLength && value.length > field.maxLength) {
-      errors[field.name] = `${field.label}は${field.maxLength}文字以内にしてください`
+      errors[field.name] = `${field.label} must be ${field.maxLength} characters or less`
       continue
     }
     if (field.type === 'number' && typeof value === 'number') {
       if (field.min !== undefined && value < field.min) {
-        errors[field.name] = `${field.label}は${field.min}以上にしてください`
+        errors[field.name] = `${field.label} must be at least ${field.min}`
         continue
       }
       if (field.max !== undefined && value > field.max) {
-        errors[field.name] = `${field.label}は${field.max}以下にしてください`
+        errors[field.name] = `${field.label} must be at most ${field.max}`
         continue
       }
     }
     if (field.type === 'reference' && Array.isArray(value) && field.maxItems && value.length > field.maxItems) {
-      errors[field.name] = `${field.label}は最大${field.maxItems}件です`
+      errors[field.name] = `${field.label} can have at most ${field.maxItems} items`
       continue
     }
     if (
@@ -117,17 +117,17 @@ export function validateFields(
         return Boolean(value) && Boolean(other) && (!Array.isArray(other) || other.length > 0)
       })
     ) {
-      errors[field.name] = `${field.label}は同時に指定できない入力があります`
+      errors[field.name] = `${field.label} has conflicting inputs that cannot be used together`
       continue
     }
 
     if (field.type === 'json') {
       if (value === undefined || value === null || value === '') {
-        if (field.required) errors[field.name] = `${field.label}は必須です`
+        if (field.required) errors[field.name] = `${field.label} is required`
         continue
       }
       if (typeof value === 'string' || typeof value !== 'object') {
-        errors[field.name] = `${field.label}のJSONが不正です`
+        errors[field.name] = `${field.label} contains invalid JSON`
       }
       continue
     }
@@ -139,13 +139,13 @@ export function validateFields(
       value.some((element) => !isKlingElementComplete(element))
     ) {
       errors[field.name] =
-        `${field.label}: 各要素に名前と画像（1枚以上）が必要です`
+        `${field.label}: Each element requires a name and at least one image`
       continue
     }
 
     if (!field.required) continue
     if (value === undefined || value === null || value === '') {
-      errors[field.name] = `${field.label}は必須です`
+      errors[field.name] = `${field.label} is required`
       continue
     }
     if (
@@ -153,7 +153,7 @@ export function validateFields(
       Array.isArray(value) &&
       value.length === 0
     ) {
-      errors[field.name] = `${field.label}は必須です`
+      errors[field.name] = `${field.label} is required`
     }
   }
   return errors

@@ -13,7 +13,7 @@ type QueueJob<T> = {
 
 export class QueueCancelledError extends Error {
   constructor() {
-    super('送信前のリクエストをキャンセルしました')
+    super('Cancelled request before submission')
     this.name = 'QueueCancelledError'
   }
 }

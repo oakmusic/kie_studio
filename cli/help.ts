@@ -1,23 +1,23 @@
 export const ROOT_HELP = `kiestudio — KIE STUDIO CLI
 
-Studio API 経由で IMAGE / VIDEO / AUDIO を生成し、結果は Gallery の履歴に載ります。
-kie.ai や /api/internal/agent は直接叩きません。
+Generate IMAGE / VIDEO / AUDIO via the Studio API. Results appear in the Gallery history.
+Direct calls to external provider APIs or internal agent endpoints are not made.
 
 Usage:
   kiestudio <command> [options]
 
 Commands:
-  up         Studio API を起動する（既に起動中なら何もしない）
-  open       Web UI (http://localhost:5173) を開く
-  models     カタログの workflow を一覧する
-  generate   生成タスクを作成する（毎回新しい taskId。冪等ではない）
-  status     タスク状態を取得する
-  history    Gallery 履歴の要約を表示する
+  up         Start Studio API (does nothing if already running)
+  open       Open Web UI in browser (http://localhost:5173)
+  models     List available catalog workflows
+  generate   Create a generation task (new taskId each run; not idempotent)
+  status     Get task status
+  history    Display summary of Gallery history
 
 Global options:
-  -h, --help     ヘルプ
-  --json         JSON で出力する
-  -V, --version  バージョン
+  -h, --help     Show help
+  --json         Output in JSON format
+  -V, --version  Show version
 
 Examples:
   kiestudio up
@@ -26,13 +26,13 @@ Examples:
   kiestudio status <taskId> --wait
   kiestudio history
 
-API 未起動時は先に \`kiestudio up\` または \`npm run dev\` を実行してください。
-接続先は STUDIO_API_BASE、未設定時は 127.0.0.1:8787-8806 を探索します。
+If API is not running, run \`kiestudio up\` or \`npm run dev\` first.
+Connection target is STUDIO_API_BASE, or autodetected from 127.0.0.1:8787-8806 if unset.
 `
 
 export const UP_HELP = `kiestudio up
 
-Studio API (Hono) を前面で起動します。既に /api/health が応答していれば何もしません。
+Starts the Studio API (Hono) in the foreground. Does nothing if /api/health is already responding.
 
 Usage:
   kiestudio up
@@ -44,7 +44,7 @@ Examples:
 
 export const OPEN_HELP = `kiestudio open
 
-Web UI をブラウザで開きます。http://localhost:5173 に届かない場合は npm run dev を案内します。
+Opens the Web UI in your default browser. Suggests \`npm run dev\` if http://localhost:5173 is unreachable.
 
 Usage:
   kiestudio open
@@ -55,15 +55,15 @@ Examples:
 
 export const MODELS_HELP = `kiestudio models
 
-カタログの workflow を一覧します。
+Lists workflows available in the catalog.
 
 Usage:
   kiestudio models [--category image|video|audio] [query]
 
 Options:
-  --category   image / video / audio で絞る
-  --json       JSON で出力する
-  -h, --help   ヘルプ
+  --category   Filter by category: image / video / audio
+  --json       Output in JSON format
+  -h, --help   Show help
 
 Examples:
   kiestudio models
@@ -74,44 +74,44 @@ Examples:
 
 export const GENERATE_HELP = `kiestudio generate
 
-生成タスクを作成し、Studio 履歴（Gallery）に記録します。
-再実行すると別タスクになります（冪等ではありません）。
+Creates a generation task and records it in Studio history (Gallery).
+Rerunning creates a separate task (not idempotent).
 
 Usage:
   kiestudio generate -m <id|model> [options]
 
 Options:
-  -m, --model <id>     workflow id または model 名（必須）
-  -p, --prompt <text>  input.prompt に入れる
-  --input <json>       生成 input を JSON で渡す
-  --set <key=value>    input の追加フィールド（複数可。value は JSON または文字列）
-  --wait               終端状態までポーリングする
-  --json               JSON で出力する
-  -h, --help           ヘルプ
+  -m, --model <id>     Workflow id or model name (required)
+  -p, --prompt <text>  Value for input.prompt
+  --input <json>       Generation input as a JSON string
+  --set <key=value>    Additional input fields (repeatable; value can be JSON or string)
+  --wait               Poll until task reaches a terminal state
+  --json               Output in JSON format
+  -h, --help           Show help
 
 Examples:
   kiestudio generate -m flux-kontext-pro -p "a red bicycle" --wait
   kiestudio generate -m market/flux-kontext-pro --input '{"prompt":"hi","aspect_ratio":"16:9"}'
   kiestudio generate -m flux-kontext-pro -p "hi" --set aspect_ratio=16:9 --json
 
-結果の管理（ピン・再利用・削除）は Gallery UI で行います。
+Manage results (pin, reuse, delete) in the Gallery UI:
   kiestudio history
   kiestudio open
 `
 
 export const STATUS_HELP = `kiestudio status
 
-タスクの正規化状態を取得します。終端状態は履歴へ mirror されます。
+Retrieves the normalized task status. Terminal states are mirrored into history.
 
 Usage:
   kiestudio status <taskId> [--provider market|suno|veo|runway] [--operation generate] [--wait] [--json]
 
 Options:
-  --provider    既定 market
-  --operation   既定 generate
-  --wait        終端状態までポーリングする
-  --json        JSON で出力する
-  -h, --help    ヘルプ
+  --provider    Provider name (default: market)
+  --operation   Operation name (default: generate)
+  --wait        Poll until task reaches a terminal state
+  --json        Output in JSON format
+  -h, --help    Show help
 
 Examples:
   kiestudio status 123e4567-e89b --wait
@@ -120,15 +120,15 @@ Examples:
 
 export const HISTORY_HELP = `kiestudio history
 
-Gallery と同じ SQLite 履歴の要約を表示します。削除やピンは CLI 第一版ではできません。
+Displays a summary of the same SQLite history used by the Gallery. Deletion and pinning are managed via Gallery UI.
 
 Usage:
   kiestudio history [query] [--category image|video|audio] [--json]
 
 Options:
-  --category   image / video / audio で絞る
-  --json       JSON で出力する
-  -h, --help   ヘルプ
+  --category   Filter by category: image / video / audio
+  --json       Output in JSON format
+  -h, --help   Show help
 
 Examples:
   kiestudio history

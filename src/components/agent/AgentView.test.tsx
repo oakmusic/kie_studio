@@ -58,10 +58,10 @@ function renderView() {
 
 async function openDraftChat() {
   renderView()
-  const [newButton] = await screen.findAllByRole('button', { name: '新規会話' })
+  const [newButton] = await screen.findAllByRole('button', { name: 'New conversation' })
   fireEvent.click(newButton!)
   fireEvent.click(screen.getByText('pick-model'))
-  fireEvent.click(screen.getByRole('button', { name: '会話を開始' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Start Conversation' }))
 }
 
 describe('AgentView', () => {
@@ -120,7 +120,7 @@ describe('AgentView', () => {
     vi.mocked(fetchAgentHealth).mockRejectedValue(new Error('Request failed (502)'))
     renderView()
     expect(await screen.findByRole('alert')).toHaveTextContent(
-      'エージェントに接続できませんでした',
+      'Could not connect to the agent',
     )
   })
 })

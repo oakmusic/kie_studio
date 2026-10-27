@@ -10,7 +10,7 @@ import {
 describe('studio presentation', () => {
   it('localizes common fields without changing Nsfw Checker', () => {
     expect(presentField({ name: 'prompt', type: 'textarea', label: 'Prompt' }).label)
-      .toBe('プロンプト')
+      .toBe('Prompt')
 
     const nsfw: FieldSchema = {
       name: 'nsfw_checker',
@@ -34,7 +34,7 @@ describe('studio presentation', () => {
       type: 'textarea',
       label: 'Prompt',
       maxLength: 5000,
-    })).toBe('最大5,000文字')
+    })).toBe('Max 5,000 characters')
 
     const model: ModelDefinition = {
       id: 'example',
@@ -49,6 +49,6 @@ describe('studio presentation', () => {
         accept: 'image/*,video/*',
       }],
     }
-    expect(modelInputSummary(model)).toBe('画像・動画入力')
+    expect(modelInputSummary(model)).toBe('Image / Video input')
   })
 })

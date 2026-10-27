@@ -53,10 +53,10 @@ function renderChat({
 }
 
 function typeAndSubmit(text: string) {
-  fireEvent.change(screen.getByRole('textbox', { name: 'エージェントへのメッセージ' }), {
+  fireEvent.change(screen.getByRole('textbox', { name: 'Message to agent' }), {
     target: { value: text },
   })
-  fireEvent.click(screen.getByRole('button', { name: '送信' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Send' }))
 }
 
 describe('AgentChat', () => {
@@ -85,7 +85,7 @@ describe('AgentChat', () => {
 
   it('draft 中は会話履歴を取得しない', async () => {
     renderChat()
-    await screen.findByRole('textbox', { name: 'エージェントへのメッセージ' })
+    await screen.findByRole('textbox', { name: 'Message to agent' })
     expect(fetchAgentMessages).not.toHaveBeenCalled()
   })
 
@@ -97,8 +97,8 @@ describe('AgentChat', () => {
   it('既存会話の読み込み失敗を表示する', async () => {
     vi.mocked(fetchAgentMessages).mockRejectedValue(new Error('Request failed (500)'))
     renderChat({ isDraft: false })
-    expect(await screen.findByRole('alert')).toHaveTextContent('会話を読み込めませんでした')
-    expect(screen.getByRole('button', { name: '再試行' })).toBeInTheDocument()
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not load conversation')
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument()
   })
 
   it('初回送信は sendMessage し、成功後に永続化コールバックを呼ぶ', async () => {
@@ -117,9 +117,9 @@ describe('AgentChat', () => {
     const onFirstSent = vi.fn()
     renderChat({ onFirstSent })
     typeAndSubmit('失敗するメッセージ')
-    await screen.findByText('送信に失敗しました: API キーがありません')
+    await screen.findByText('Failed to send: API キーがありません')
     expect(onFirstSent).not.toHaveBeenCalled()
-    expect(screen.getByRole('textbox', { name: 'エージェントへのメッセージ' })).toHaveValue(
+    expect(screen.getByRole('textbox', { name: 'Message to agent' })).toHaveValue(
       '失敗するメッセージ',
     )
   })
@@ -127,7 +127,7 @@ describe('AgentChat', () => {
   it('2 通目以降も sendMessage を使う', async () => {
     chatMocks.sendMessage.mockResolvedValue(undefined)
     renderChat({ isDraft: false })
-    await screen.findByRole('textbox', { name: 'エージェントへのメッセージ' })
+    await screen.findByRole('textbox', { name: 'Message to agent' })
     typeAndSubmit('続きのメッセージ')
     await waitFor(() => expect(chatMocks.sendMessage).toHaveBeenCalledWith({ text: '続きのメッセージ' }))
   })
@@ -147,6 +147,6 @@ describe('AgentChat', () => {
     )
     renderChat({ isDraft: false })
     expect(await screen.findByText('接続できません')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '送信' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Send' })).toBeInTheDocument()
   })
 })
