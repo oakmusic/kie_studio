@@ -82,6 +82,32 @@ describe('POST /generate validation', () => {
     )
   })
 
+  it('strips width and height when aspect_ratio or resolution are present', async () => {
+    const response = await post(
+      makeApp(),
+      JSON.stringify({
+        model: 'flux-3/klein-text-to-image',
+        input: {
+          prompt: 'scenic view',
+          aspect_ratio: '16:9',
+          resolution: '2K',
+          width: 1920,
+          height: 1080,
+        },
+      }),
+    )
+    expect(response.status).toBe(200)
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: {
+          prompt: 'scenic view',
+          aspect_ratio: '16:9',
+          resolution: '2K',
+        },
+      }),
+    )
+  })
+
   it('rejects a non-https callBackUrl', async () => {
     const response = await post(
       makeApp(),

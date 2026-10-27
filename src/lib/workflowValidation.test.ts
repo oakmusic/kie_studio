@@ -118,4 +118,31 @@ describe('workflow constraints', () => {
       personaId: 'stale',
     })).toEqual({ customMode: false, prompt: 'lo-fi beat' })
   })
+
+  it('strips width and height when aspect_ratio or resolution are present', () => {
+    const model: ModelDefinition = {
+      id: 'flux-3/klein-text-to-image',
+      model: 'flux-3/klein-text-to-image',
+      title: 'FLUX 3 Klein',
+      category: 'image',
+      provider: 'market',
+      fields: [
+        { name: 'prompt', type: 'textarea', label: 'Prompt' },
+        { name: 'aspect_ratio', type: 'enum', label: 'Aspect Ratio', enum: ['1:1', '16:9'] },
+        { name: 'resolution', type: 'enum', label: 'Resolution', enum: ['1K', '2K'] },
+      ],
+    }
+    const input = {
+      prompt: 'A sunset over the mountains',
+      aspect_ratio: '16:9',
+      resolution: '2K',
+      width: 1920,
+      height: 1080,
+    }
+    expect(sanitizeWorkflowInput(model, input)).toEqual({
+      prompt: 'A sunset over the mountains',
+      aspect_ratio: '16:9',
+      resolution: '2K',
+    })
+  })
 })

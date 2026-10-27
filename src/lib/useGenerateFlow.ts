@@ -72,19 +72,29 @@ export function useGenerateFlow({
         }
         const provider = item.provider ?? 'market'
         const operation = item.operation ?? 'generate'
+        const rawInput = item.input as Record<string, unknown>
+        const retryInput = { ...rawInput }
+        if (
+          retryInput.aspect_ratio !== undefined ||
+          retryInput.aspectratio !== undefined ||
+          retryInput.resolution !== undefined
+        ) {
+          delete retryInput.width
+          delete retryInput.height
+        }
         const res = await submissionQueue.enqueue({
           provider,
           operation,
           model: item.model,
           run: () => generateTask({
             model: item.model,
-            input: item.input as Record<string, unknown>,
+            input: retryInput,
             provider,
             operation,
           }),
         })
         return {
-          tasks: [{ taskId: res.data.taskId, input: item.input, normalized: res.data.task }],
+          tasks: [{ taskId: res.data.taskId, input: retryInput, normalized: res.data.task }],
           model: item.model,
           category: item.category,
           modelId: item.modelId,

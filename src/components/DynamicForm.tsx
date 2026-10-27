@@ -205,6 +205,7 @@ export function DynamicForm({
   const orderedFields = useMemo(
     () => sortFieldsForDisplay(fields).filter((field) => {
       if (field.name.startsWith('_')) return false
+      if (field.name === 'width' || field.name === 'height') return false
       if (
         modelId === 'market/elevenlabs-tts' &&
         (field.name === 'previous_text' || field.name === 'next_text')

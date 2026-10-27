@@ -89,4 +89,21 @@ describe('DynamicForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /Advanced Settings/i }))
     expect(screen.getAllByLabelText('Guidance').length).toBeGreaterThan(0)
   })
+
+  it('does not render width and height sliders', () => {
+    renderForm(
+      [
+        { name: 'title', type: 'string', label: 'Title' },
+        { name: 'width', type: 'number', label: 'Width', min: 256, max: 4096 },
+        { name: 'height', type: 'number', label: 'Height', min: 256, max: 4096 },
+        { name: 'aspect_ratio', type: 'enum', label: 'Aspect Ratio', enum: ['1:1', '16:9'] },
+        { name: 'resolution', type: 'enum', label: 'Resolution', enum: ['1K', '2K'] },
+      ],
+      { title: 'test', width: 256, height: 256, aspect_ratio: '1:1', resolution: '1K' },
+    )
+    expect(screen.queryByLabelText('Width')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Height')).not.toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Aspect Ratio' })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Resolution' })).toBeInTheDocument()
+  })
 })

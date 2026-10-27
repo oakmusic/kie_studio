@@ -72,6 +72,20 @@ export function sanitizeWorkflowInput(
 ): Record<string, unknown> {
   const sanitized = { ...input }
   if (
+    sanitized.aspect_ratio !== undefined ||
+    sanitized.aspectratio !== undefined ||
+    sanitized.resolution !== undefined ||
+    model.fields.some(
+      (f) =>
+        f.name === 'aspect_ratio' ||
+        f.name === 'aspectratio' ||
+        f.name === 'resolution',
+    )
+  ) {
+    delete sanitized.width
+    delete sanitized.height
+  }
+  if (
     model.provider === 'suno' &&
     (model.id === 'suno/music' || model.operation === 'upload-cover') &&
     sanitized.customMode === false

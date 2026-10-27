@@ -1,7 +1,7 @@
 {
-  "syncedAt": "2026-10-26T23:45:46.912Z",
+  "syncedAt": "2026-10-27T19:32:42.996Z",
   "source": "docs.kie.ai/llms.txt",
-  "sourceHash": "123b3f2888f71217a7157a2078da73fc95af17749d06918e4194616af11787e7",
+  "sourceHash": "7ae1f24114d8425b63334df924d73ea6d5ffce8e02eb5758cf783dedd40d1ddc",
   "models": [
     {
       "id": "elevenlabs/audio-isolation",
@@ -724,26 +724,6 @@
           ]
         },
         {
-          "name": "width",
-          "type": "number",
-          "label": "Width",
-          "description": "Width of the generated image. Both width and height must be passed at the same time. Must be an integer between 256 and 4096. The aspect ratio (width:height) must be between 1:2.5 and 2.5:1. Once passed, aspect_ratio and resolution are ignored.",
-          "required": false,
-          "min": 256,
-          "max": 4096,
-          "step": 1
-        },
-        {
-          "name": "height",
-          "type": "number",
-          "label": "Height",
-          "description": "Height of the generated image. Both width and height must be passed at the same time. Must be an integer between 256 and 4096. The aspect ratio (width:height) must be between 1:2.5 and 2.5:1. Once passed, aspect_ratio and resolution are ignored.",
-          "required": false,
-          "min": 256,
-          "max": 4096,
-          "step": 1
-        },
-        {
           "name": "output_format",
           "type": "enum",
           "label": "Output Format",
@@ -842,26 +822,6 @@
             "2K",
             "4K"
           ]
-        },
-        {
-          "name": "width",
-          "type": "number",
-          "label": "Width",
-          "description": "Image width. Both width and height must be passed at the same time. Aspect ratio must be between 1:2.5 and 2.5:1. Once passed, aspect_ratio and resolution are ignored.",
-          "required": false,
-          "min": 256,
-          "max": 4096,
-          "step": 1
-        },
-        {
-          "name": "height",
-          "type": "number",
-          "label": "Height",
-          "description": "Image height. Both width and height must be passed at the same time. Aspect ratio must be between 1:2.5 and 2.5:1. Once passed, aspect_ratio and resolution are ignored.",
-          "required": false,
-          "min": 256,
-          "max": 4096,
-          "step": 1
         },
         {
           "name": "output_format",

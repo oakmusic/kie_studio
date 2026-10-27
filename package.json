@@ -2,7 +2,7 @@
   "name": "kie_studio",
   "private": true,
   "license": "GPL-3.0-or-later",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "English translation of Kie Studio by Masaki Ozeki - local Studio for IMAGE / VIDEO / AUDIO generation powered by kie.ai",
   "author": "Masaki Ozeki (original creator) / oakmusic (English translation)",
   "homepage": "https://github.com/oakmusic/kie_studio",

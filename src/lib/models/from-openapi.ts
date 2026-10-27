@@ -151,8 +151,21 @@ export function inputSchemaToFields(
     ...Object.keys(properties).filter((n) => !orderedNames.has(n)),
   ]
 
+  const hasAspectOrResolution = Object.keys(properties).some((k) => {
+    const kt = k.trim().toLowerCase()
+    return kt === 'aspect_ratio' || kt === 'aspectratio' || kt === 'resolution'
+  })
+
+  const filteredNames = names.filter((name) => {
+    const trimmed = name.trim().toLowerCase()
+    if (hasAspectOrResolution && (trimmed === 'width' || trimmed === 'height')) {
+      return false
+    }
+    return true
+  })
+
   // OpenAPI keys sometimes include trailing spaces (e.g. Seedance docs).
-  return names.map((name) =>
+  return filteredNames.map((name) =>
     propertyToField(name.trim(), properties[name]!, required),
   )
 }

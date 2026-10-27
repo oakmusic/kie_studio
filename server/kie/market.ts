@@ -36,9 +36,18 @@ export async function createTask(params: {
   input: Record<string, unknown>
   callBackUrl?: string
 }): Promise<string> {
+  const input = { ...params.input }
+  if (
+    input.aspect_ratio !== undefined ||
+    input.aspectratio !== undefined ||
+    input.resolution !== undefined
+  ) {
+    delete input.width
+    delete input.height
+  }
   const body: Record<string, unknown> = {
     model: params.model,
-    input: params.input,
+    input,
   }
   if (params.callBackUrl) body.callBackUrl = params.callBackUrl
 

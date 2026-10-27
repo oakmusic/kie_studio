@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { extractModelSlug, propertyToField } from './from-openapi.ts'
+import {
+  extractModelSlug,
+  inputSchemaToFields,
+  propertyToField,
+} from './from-openapi.ts'
 
 describe('OpenAPI field constraints', () => {
   it('uses explicit prose constraints when the schema omits them', () => {
@@ -55,3 +59,37 @@ describe('extractModelSlug', () => {
     )
   })
 })
+
+describe('inputSchemaToFields', () => {
+  it('excludes width and height when aspect_ratio or resolution are present', () => {
+    const fields = inputSchemaToFields({
+      properties: {
+        prompt: { type: 'string' },
+        aspect_ratio: { type: 'string', enum: ['1:1', '16:9'] },
+        resolution: { type: 'string', enum: ['1K', '2K'] },
+        width: { type: 'integer', minimum: 256, maximum: 4096 },
+        height: { type: 'integer', minimum: 256, maximum: 4096 },
+      },
+    })
+    const names = fields.map((f) => f.name)
+    expect(names).toContain('prompt')
+    expect(names).toContain('aspect_ratio')
+    expect(names).toContain('resolution')
+    expect(names).not.toContain('width')
+    expect(names).not.toContain('height')
+  })
+
+  it('keeps width and height when neither aspect_ratio nor resolution are present', () => {
+    const fields = inputSchemaToFields({
+      properties: {
+        prompt: { type: 'string' },
+        width: { type: 'integer', minimum: 256, maximum: 4096 },
+        height: { type: 'integer', minimum: 256, maximum: 4096 },
+      },
+    })
+    const names = fields.map((f) => f.name)
+    expect(names).toContain('width')
+    expect(names).toContain('height')
+  })
+})
+

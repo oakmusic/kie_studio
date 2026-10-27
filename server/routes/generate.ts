@@ -56,6 +56,17 @@ generateRoutes.post('/generate', validateJson(generateSchema), async (c) => {
     }
   }
 
+  const rawInput = body.input as Record<string, unknown>
+  const input = { ...rawInput }
+  if (
+    input.aspect_ratio !== undefined ||
+    input.aspectratio !== undefined ||
+    input.resolution !== undefined
+  ) {
+    delete input.width
+    delete input.height
+  }
+
   const provider = body.provider
   const operation = body.operation
   const adapter = getProviderAdapter(provider)
@@ -63,7 +74,7 @@ generateRoutes.post('/generate', validateJson(generateSchema), async (c) => {
     provider,
     operation,
     model: body.model,
-    input: body.input,
+    input,
     callBackUrl,
   })
 
@@ -72,7 +83,7 @@ generateRoutes.post('/generate', validateJson(generateSchema), async (c) => {
       provider,
       operation,
       model: body.model,
-      input: body.input as Record<string, unknown>,
+      input,
       created,
       workflowId: body.workflowId,
     })
