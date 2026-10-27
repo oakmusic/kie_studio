@@ -25,6 +25,7 @@ export interface BrowserWindowOptions {
 }
 
 export class BrowserWindow {
+  ptr?: unknown
   constructor(options?: BrowserWindowOptions)
 }
 

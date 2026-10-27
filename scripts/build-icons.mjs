@@ -13,7 +13,7 @@
  * 依存（devDependencies）: sharp（SVG ラスタライズ + リサイズ）, png-to-ico（ICO 生成）
  * 実行: npm run icons
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
@@ -60,5 +60,27 @@ for (const [size, name] of iconsetSizes) {
   writeFileSync(join(iconsetDir, name), await raster(size))
 }
 console.log(`[build-icons] assets/icon.iconset/ (${iconsetSizes.length} files)`)
+
+// public/ のファビコンも assets/ と完全同期
+writeFileSync(join(root, 'public', 'favicon.ico'), ico)
+writeFileSync(join(root, 'public', 'favicon.png'), linux)
+console.log('[build-icons] public/favicon.ico, public/favicon.png を同期')
+
+// node_modules/electrobun/dist-win-x64 内の bun.exe / launcher.exe にも事前埋め込み
+const distWinDir = join(root, 'node_modules', 'electrobun', 'dist-win-x64')
+if (existsSync(distWinDir)) {
+  try {
+    const { rcedit } = await import('rcedit')
+    for (const bExe of ['bun.exe', 'launcher.exe']) {
+      const bPath = join(distWinDir, bExe)
+      if (existsSync(bPath)) {
+        await rcedit(bPath, { icon: join(assetsDir, 'icon.ico') })
+        console.log(`[build-icons] dist-win-x64/${bExe} へアイコン埋め込み済み`)
+      }
+    }
+  } catch (err) {
+    console.warn('[build-icons] dist-win-x64 アイコン埋め込みスキップ:', err.message)
+  }
+}
 
 console.log('[build-icons] 完了。')

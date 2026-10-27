@@ -78,29 +78,38 @@ try {
   }
   console.log(`[win-installer] staging 構築完了: ${readdirSync(stagingDir).join(', ')}`)
 
-  // --- 2.5 launcher.exe へアイコン/バージョン情報を埋め込み ---
+  // --- 2.5 launcher.exe / bun.exe へアイコン/バージョン情報を埋め込み ---
   // Electrobun 本体は rcedit のパス解決バグ（CI ビルドパス参照）で build.win.icon の
   // 埋め込みに失敗するため、自前で rcedit を実行しタスクバー/ウィンドウ/Explorer 表示を改善。
-  // 失敗してもビルドは続行（ショートカット/ARP の app.ico で可視アイコンは担保済み）。
-  const launcherExe = join(stagingDir, 'bin', 'launcher.exe')
   const iconIco = join(root, 'assets', 'icon.ico')
-  if (existsSync(launcherExe) && existsSync(iconIco)) {
+  if (existsSync(iconIco)) {
     try {
       const { rcedit } = await import('rcedit')
-      await rcedit(launcherExe, {
-        icon: iconIco,
-        'version-string': {
-          FileDescription: 'KIE STUDIO',
-          ProductName: 'KIE STUDIO',
-          CompanyName: 'KIE STUDIO',
-          OriginalFilename: 'launcher.exe',
-        },
-        'file-version': version,
-        'product-version': version,
-      })
-      console.log('[win-installer] launcher.exe へアイコン/バージョン情報を埋め込み済み')
+      for (const exeName of ['launcher.exe', 'bun.exe']) {
+        const targetExe = join(stagingDir, 'bin', exeName)
+        if (existsSync(targetExe)) {
+          await rcedit(targetExe, {
+            icon: iconIco,
+            'version-string': {
+              FileDescription: 'KIE STUDIO',
+              ProductName: 'KIE STUDIO',
+              CompanyName: 'KIE STUDIO',
+              OriginalFilename: exeName,
+            },
+            'file-version': version,
+            'product-version': version,
+          })
+          console.log(`[win-installer] ${exeName} へアイコン/バージョン情報を埋め込み済み`)
+        }
+      }
+      cpSync(iconIco, join(stagingDir, 'app.ico'), { force: true })
+      cpSync(iconIco, join(stagingDir, 'bin', 'app.ico'), { force: true })
+      const stagingRes = join(stagingDir, 'Resources')
+      if (existsSync(stagingRes)) {
+        cpSync(iconIco, join(stagingRes, 'app.ico'), { force: true })
+      }
     } catch (err) {
-      console.warn(`[win-installer] launcher.exe へのアイコン埋め込みに失敗（無視して続行）: ${err.message}`)
+      console.warn(`[win-installer] アイコン埋め込みに失敗（無視して続行）: ${err.message}`)
     }
   }
 

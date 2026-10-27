@@ -7,6 +7,7 @@ import { shouldReseedCatalog } from '../../server/catalog/sync.ts'
 import { startRuntimeCatalogSync } from '../../server/catalog/runtime-sync.ts'
 import type { Catalog } from '../../src/lib/models/types.ts'
 import { ensureInstallWorkingDirectory } from './installCwd.ts'
+import { dlopen, FFIType, ptr } from 'bun:ffi'
 
 // Electrobun main process entry (build.bun.entrypoint). Boots the shared Hono
 // app inside Bun and points a native webview at the pre-built React UI.
@@ -117,11 +118,107 @@ startBackfill()
 // (including ?query and #hash) as a literal file path. No parameters can be
 // appended to the URL. The frontend uses the default API port (8787) or
 // discovers it via the /api/health probe (see src/lib/api.ts).
-new BrowserWindow({
+const mainWindow = new BrowserWindow({
   title: 'KIE STUDIO',
   url: 'views://mainview/index.html',
-  frame: { width: 1280, height: 832 },
+  frame: { width: 1600, height: 900 },
 })
+applyWindowsWindowIcon(mainWindow, 'KIE STUDIO')
+
+function applyWindowsWindowIcon(winInstance: BrowserWindow, title: string) {
+  if (process.platform !== 'win32') return
+
+  // 1. Explicit AppUserModelID ensures Windows taskbar grouping matches the shortcut
+  try {
+    const shell32 = dlopen('shell32.dll', {
+      SetCurrentProcessExplicitAppUserModelID: {
+        args: [FFIType.ptr],
+        returns: FFIType.u32,
+      },
+    })
+    const appIdBuf = Buffer.from('ai.kie.studio\0', 'utf16le')
+    shell32.symbols.SetCurrentProcessExplicitAppUserModelID(ptr(appIdBuf))
+  } catch (err) {
+    console.warn('[desktop] SetCurrentProcessExplicitAppUserModelID skipped:', err)
+  }
+
+  // 2. Load and set official .ico on HWND title bar and taskbar tab
+  try {
+    const candidates = [
+      join(binDir, '..', 'Resources', 'app.ico'),
+      join(binDir, '..', 'app.ico'),
+      join(binDir, 'app.ico'),
+      join(binDir, 'Resources', 'app.ico'),
+      join(binDir, '..', 'assets', 'icon.ico'),
+      join(process.cwd(), 'assets', 'icon.ico'),
+      join(process.cwd(), 'public', 'favicon.ico'),
+    ]
+    const iconPath = candidates.find(existsSync)
+    if (!iconPath) {
+      console.warn('[desktop] no icon file found for Windows window')
+      return
+    }
+
+    const user32 = dlopen('user32.dll', {
+      LoadImageW: {
+        args: [FFIType.ptr, FFIType.ptr, FFIType.u32, FFIType.i32, FFIType.i32, FFIType.u32],
+        returns: FFIType.ptr,
+      },
+      SendMessageW: {
+        args: [FFIType.ptr, FFIType.u32, FFIType.u64, FFIType.ptr],
+        returns: FFIType.ptr,
+      },
+      SetClassLongPtrW: {
+        args: [FFIType.ptr, FFIType.i32, FFIType.ptr],
+        returns: FFIType.ptr,
+      },
+      FindWindowW: {
+        args: [FFIType.ptr, FFIType.ptr],
+        returns: FFIType.ptr,
+      },
+    })
+
+    const iconPathBuf = Buffer.from(iconPath + '\0', 'utf16le')
+    const iconPathPtr = ptr(iconPathBuf)
+    const hIconSmall = user32.symbols.LoadImageW(null, iconPathPtr, 1, 16, 16, 0x0010)
+    const hIconBig = user32.symbols.LoadImageW(null, iconPathPtr, 1, 32, 32, 0x0010)
+    const hIconLarge = user32.symbols.LoadImageW(null, iconPathPtr, 1, 256, 256, 0x0010) || hIconBig
+
+    const applyToHwnd = (hwnd: unknown) => {
+      if (!hwnd || hwnd === 0) return false
+      if (hIconSmall) {
+        user32.symbols.SendMessageW(hwnd, 0x0080, 0, hIconSmall)
+        user32.symbols.SendMessageW(hwnd, 0x0080, 2, hIconSmall)
+        user32.symbols.SetClassLongPtrW(hwnd, -34, hIconSmall)
+      }
+      if (hIconBig || hIconLarge) {
+        const big = hIconBig || hIconLarge
+        user32.symbols.SendMessageW(hwnd, 0x0080, 1, big)
+        user32.symbols.SetClassLongPtrW(hwnd, -14, big)
+      }
+      return true
+    }
+
+    const titleBuf = Buffer.from(title + '\0', 'utf16le')
+    const tryApply = () => {
+      let hwnd = winInstance.ptr
+      if (!hwnd || hwnd === 0) {
+        hwnd = user32.symbols.FindWindowW(null, ptr(titleBuf))
+      }
+      if (hwnd && hwnd !== 0) {
+        applyToHwnd(hwnd)
+      }
+    }
+
+    tryApply()
+    setTimeout(tryApply, 50)
+    setTimeout(tryApply, 150)
+    setTimeout(tryApply, 500)
+    setTimeout(tryApply, 1500)
+  } catch (err) {
+    console.warn('[desktop] failed to apply Windows icon:', err)
+  }
+}
 
 // Non-blocking, best-effort update check querying GitHub releases for oakmusic/kie_studio.
 async function checkForUpdatesQuietly() {

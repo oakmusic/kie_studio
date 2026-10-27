@@ -104,6 +104,34 @@ try {
     }
   }
 
+  // launcher.exe / bun.exe へアイコン/バージョン情報を埋め込み
+  if (existsSync(iconIco)) {
+    try {
+      const { rcedit } = await import('rcedit')
+      for (const exeName of ['launcher.exe', 'bun.exe']) {
+        const targetExe = join(portableAppDir, 'bin', exeName)
+        if (existsSync(targetExe)) {
+          await rcedit(targetExe, {
+            icon: iconIco,
+            'version-string': {
+              FileDescription: 'KIE STUDIO',
+              ProductName: 'KIE STUDIO',
+              CompanyName: 'KIE STUDIO',
+              OriginalFilename: exeName,
+            },
+            'file-version': version,
+            'product-version': version,
+          })
+          console.log(`[win-portable] ${exeName} へアイコン/バージョン情報を埋め込み済み`)
+        }
+      }
+      cpSync(iconIco, join(portableAppDir, 'app.ico'), { force: true })
+      cpSync(iconIco, join(portableAppDir, 'bin', 'app.ico'), { force: true })
+    } catch (err) {
+      console.warn(`[win-portable] アイコン埋め込み失敗: ${err.message}`)
+    }
+  }
+
   // ポータブル用ローカル data ディレクトリ
   const dataDir = join(portableAppDir, 'data')
   mkdirSync(dataDir, { recursive: true })

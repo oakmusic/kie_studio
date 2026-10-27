@@ -89,6 +89,51 @@ try {
   }
   console.log('[embed-win-icon] launcher へアイコン/バージョン情報を埋め込み済み')
 
+  // bun.exe にもアイコンを埋め込み
+  const bunTarget = join(appDir, 'bin', 'bun.exe')
+  if (existsSync(bunTarget)) {
+    try {
+      await rcedit(bunTarget, {
+        icon: iconIco,
+        'version-string': {
+          FileDescription: 'KIE STUDIO',
+          ProductName: 'KIE STUDIO',
+          CompanyName: 'KIE STUDIO',
+          OriginalFilename: 'bun.exe',
+        },
+        'file-version': version,
+        'product-version': version,
+      })
+      console.log('[embed-win-icon] bun.exe へアイコン/バージョン情報を埋め込み済み')
+    } catch (err) {
+      console.warn(`[embed-win-icon] bun.exe 埋め込み失敗: ${err.message}`)
+    }
+  }
+
+  // dist-win-x64 のマスターバイナリにもアイコンを事前埋め込み
+  const distWinDir = join(root, 'node_modules', 'electrobun', 'dist-win-x64')
+  if (existsSync(distWinDir)) {
+    for (const bExe of ['bun.exe', 'launcher.exe']) {
+      const bPath = join(distWinDir, bExe)
+      if (existsSync(bPath)) {
+        try {
+          await rcedit(bPath, {
+            icon: iconIco,
+            'version-string': {
+              FileDescription: 'KIE STUDIO',
+              ProductName: 'KIE STUDIO',
+              CompanyName: 'KIE STUDIO',
+              OriginalFilename: bExe,
+            },
+            'file-version': version,
+            'product-version': version,
+          })
+          console.log(`[embed-win-icon] dist-win-x64/${bExe} へアイコン埋め込み済み`)
+        } catch {}
+      }
+    }
+  }
+
   // Setup.exe にもアイコンを埋め込み
   const setupExes = readdirSync(buildPlatformDir).filter((f) => f.endsWith('.exe'))
   for (const sExe of setupExes) {
@@ -139,29 +184,39 @@ try {
     execSync(`tar -xf "${tarFile}" -C "${tmp}"`, { stdio: 'pipe' })
   }
 
-  // 展開されたツリー内の launcher.exe へアイコン埋め込み
+  // 展開されたツリー内の launcher.exe / bun.exe へアイコン埋め込み
   const topEntries = readdirSync(tmp).filter((n) => n !== 'payload.tar')
   if (topEntries.length === 1) {
-    const innerLauncher = join(tmp, topEntries[0], 'bin', 'launcher.exe')
-    if (existsSync(innerLauncher)) {
-      try {
-        const { rcedit } = await import('rcedit')
-        await rcedit(innerLauncher, {
-          icon: iconIco,
-          'version-string': {
-            FileDescription: 'KIE STUDIO',
-            ProductName: 'KIE STUDIO',
-            CompanyName: 'KIE STUDIO',
-            OriginalFilename: 'launcher.exe',
-          },
-          'file-version': version,
-          'product-version': version,
-        })
-        console.log('[embed-win-icon] tar.zst 内の launcher.exe をパッチ済みバイナリで置換')
-      } catch (err) {
-        console.warn(`[embed-win-icon] tar.zst 内の launcher.exe へのアイコン埋め込み失敗: ${err.message}`)
+    const innerBin = join(tmp, topEntries[0], 'bin')
+    const exesToPatch = ['launcher.exe', 'bun.exe']
+    const { rcedit } = await import('rcedit')
+    for (const exeName of exesToPatch) {
+      const exePath = join(innerBin, exeName)
+      if (existsSync(exePath)) {
+        try {
+          await rcedit(exePath, {
+            icon: iconIco,
+            'version-string': {
+              FileDescription: 'KIE STUDIO',
+              ProductName: 'KIE STUDIO',
+              CompanyName: 'KIE STUDIO',
+              OriginalFilename: exeName,
+            },
+            'file-version': version,
+            'product-version': version,
+          })
+          console.log(`[embed-win-icon] tar.zst 内の ${exeName} をパッチ済みバイナリで置換`)
+        } catch (err) {
+          console.warn(`[embed-win-icon] tar.zst 内の ${exeName} へのアイコン埋め込み失敗: ${err.message}`)
+        }
       }
     }
+    // Resources/app.ico を確保
+    const innerRes = join(tmp, topEntries[0], 'Resources')
+    if (existsSync(innerRes)) {
+      cpSync(iconIco, join(innerRes, 'app.ico'), { force: true })
+    }
+    cpSync(iconIco, join(tmp, topEntries[0], 'app.ico'), { force: true })
   }
 
   // 再圧縮（.tar.zst）

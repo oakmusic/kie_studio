@@ -76,9 +76,9 @@ Source: "staging\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs creat
 
 [Icons]
 ; スタートメニュー（Electrobun 純正と同じく Programs 直下に配置し上書き/削除を確実にする）。
-Name: "{userprograms}\{#AppName}"; Filename: "{app}\{#LauncherExe}"; WorkingDir: "{app}\bin"; IconFilename: "{app}\app.ico"
+Name: "{userprograms}\{#AppName}"; Filename: "{app}\{#LauncherExe}"; WorkingDir: "{app}\bin"; IconFilename: "{app}\app.ico"; AppUserModelID: "{#AppId}"
 ; デスクトップ（タスクで選択時のみ）。
-Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#LauncherExe}"; WorkingDir: "{app}\bin"; IconFilename: "{app}\app.ico"; Tasks: desktopicon
+Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#LauncherExe}"; WorkingDir: "{app}\bin"; IconFilename: "{app}\app.ico"; Tasks: desktopicon; AppUserModelID: "{#AppId}"
 
 [Run]
 Filename: "{app}\{#LauncherExe}"; WorkingDir: "{app}\bin"; Description: "Launch {#AppName}"; Flags: nowait postinstall skipifsilent runascurrentuser
