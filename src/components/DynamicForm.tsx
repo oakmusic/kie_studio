@@ -269,26 +269,26 @@ export function DynamicForm({
     return presentField(
       conditionalSuno
         ? {
-              ...schemaField,
-              required:
-                schemaField.name === 'prompt'
-                  ? values.customMode === false || values.instrumental !== true
-                  : schemaField.name === 'style' || schemaField.name === 'title'
-                    ? values.customMode !== false
-                    : schemaField.required,
-              maxLength:
-                schemaField.name === 'prompt'
-                  ? values.customMode === false
-                    ? 500
-                    : modelName === 'V4'
-                      ? 3000
-                      : 5000
-                  : schemaField.name === 'style'
-                    ? modelName === 'V4'
-                      ? 200
-                      : 1000
-                    : schemaField.maxLength,
-            }
+          ...schemaField,
+          required:
+            schemaField.name === 'prompt'
+              ? values.customMode === false || values.instrumental !== true
+              : schemaField.name === 'style' || schemaField.name === 'title'
+                ? values.customMode !== false
+                : schemaField.required,
+          maxLength:
+            schemaField.name === 'prompt'
+              ? values.customMode === false
+                ? 500
+                : modelName === 'V4'
+                  ? 3000
+                  : 5000
+              : schemaField.name === 'style'
+                ? modelName === 'V4'
+                  ? 200
+                  : 1000
+                : schemaField.maxLength,
+        }
         : schemaField,
     )
   }
@@ -306,314 +306,314 @@ export function DynamicForm({
     const wrap = 'py-4 first:pt-0'
 
     switch (field.type) {
-          case 'textarea':
-            if (modelId === 'market/elevenlabs-tts' && field.name === 'text') {
-              return (
-                <div key={field.name} className={wrap}>
-                  <FieldLabel field={field} />
-                  <NarrationEditor
-                    value={typeof value === 'string' ? value : ''}
-                    disabled={disabled}
-                    onChange={(next) => clearErrorOnChange(field.name, next)}
-                  />
-                  <FieldError message={error} id={`${id}-error`} />
-                </div>
-              )
-            }
-            return (
-              <div key={field.name} className={wrap}>
-                <FieldLabel field={field} htmlFor={id} />
-                <textarea
-                  id={id}
-                  ref={
-                    field.name === promptFieldName ? promptRef : undefined
-                  }
-                  className={`${inputClass} min-h-28 resize-y`}
-                  value={typeof value === 'string' ? value : ''}
-                  maxLength={field.maxLength}
+      case 'textarea':
+        if (modelId === 'market/elevenlabs-tts' && field.name === 'text') {
+          return (
+            <div key={field.name} className={wrap}>
+              <FieldLabel field={field} />
+              <NarrationEditor
+                value={typeof value === 'string' ? value : ''}
+                disabled={disabled}
+                onChange={(next) => clearErrorOnChange(field.name, next)}
+              />
+              <FieldError message={error} id={`${id}-error`} />
+            </div>
+          )
+        }
+        return (
+          <div key={field.name} className={wrap}>
+            <FieldLabel field={field} htmlFor={id} />
+            <textarea
+              id={id}
+              ref={
+                field.name === promptFieldName ? promptRef : undefined
+              }
+              className={`${inputClass} min-h-28 resize-y`}
+              value={typeof value === 'string' ? value : ''}
+              maxLength={field.maxLength}
+              disabled={disabled}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? `${id}-error` : undefined}
+              onChange={(e) =>
+                clearErrorOnChange(field.name, e.target.value)
+              }
+              placeholder={
+                field.name === 'prompt'
+                  ? 'e.g., Refer to @image1... / @element_dog runs'
+                  : field.label
+              }
+            />
+            <FieldError message={error} id={`${id}-error`} />
+            {field.name === promptFieldName && (
+              <>
+                {enhancePromptField && (() => {
+                  const isEnhanceActive =
+                    typeof values[enhancePromptField.name] === 'boolean'
+                      ? Boolean(values[enhancePromptField.name])
+                      : enhancePromptField.default !== false
+                  return (
+                    <div className="mt-2.5 flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2">
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs font-semibold text-[var(--text)]">
+                          {enhancePromptField.label}
+                        </span>
+                        <p className="text-[11px] leading-tight text-[var(--text-muted)]">
+                          Rewrites prompt into a fuller description for higher quality
+                        </p>
+                      </div>
+                      <div
+                        role="group"
+                        aria-label={enhancePromptField.label}
+                        className="studio-switch-group shrink-0"
+                      >
+                        <Pressable
+                          disabled={disabled}
+                          aria-pressed={!isEnhanceActive}
+                          aria-label={`${enhancePromptField.label} Off`}
+                          onClick={() => clearErrorOnChange(enhancePromptField.name, false)}
+                          scaleTo={0.96}
+                          className={`studio-switch-btn ${!isEnhanceActive ? 'is-active' : ''}`}
+                        >
+                          Off
+                        </Pressable>
+                        <Pressable
+                          disabled={disabled}
+                          aria-pressed={isEnhanceActive}
+                          aria-label={`${enhancePromptField.label} On`}
+                          onClick={() => clearErrorOnChange(enhancePromptField.name, true)}
+                          scaleTo={0.96}
+                          className={`studio-switch-btn ${isEnhanceActive ? 'is-active-on' : ''}`}
+                        >
+                          On
+                        </Pressable>
+                      </div>
+                    </div>
+                  )
+                })()}
+                <FieldError
+                  message={enhancePromptField ? fieldErrors?.[enhancePromptField.name] : undefined}
+                  id={enhancePromptField ? `${fieldId(enhancePromptField.name)}-error` : undefined}
+                />
+                <PromptOptimizePanel
+                  prompt={typeof value === 'string' ? value : ''}
+                  modelId={modelId}
                   disabled={disabled}
-                  aria-invalid={Boolean(error)}
-                  aria-describedby={error ? `${id}-error` : undefined}
-                  onChange={(e) =>
-                    clearErrorOnChange(field.name, e.target.value)
-                  }
-                  placeholder={
-                    field.name === 'prompt'
-                      ? 'e.g., Refer to @image1... / @element_dog runs'
-                      : field.label
+                  onApply={(optimized) =>
+                    clearErrorOnChange(field.name, optimized)
                   }
                 />
-                <FieldError message={error} id={`${id}-error`} />
-                {field.name === promptFieldName && (
-                  <>
-                    {enhancePromptField && (() => {
-                      const isEnhanceActive =
-                        typeof values[enhancePromptField.name] === 'boolean'
-                          ? Boolean(values[enhancePromptField.name])
-                          : enhancePromptField.default !== false
-                      return (
-                        <div className="mt-2.5 flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2">
-                          <div className="min-w-0 flex-1">
-                            <span className="text-xs font-semibold text-[var(--text)]">
-                              {enhancePromptField.label}
-                            </span>
-                            <p className="text-[11px] leading-tight text-[var(--text-muted)]">
-                              Rewrites prompt into a fuller description for higher quality
-                            </p>
-                          </div>
-                          <div
-                            role="group"
-                            aria-label={enhancePromptField.label}
-                            className="studio-switch-group shrink-0"
-                          >
-                            <Pressable
-                              disabled={disabled}
-                              aria-pressed={!isEnhanceActive}
-                              aria-label={`${enhancePromptField.label} Off`}
-                              onClick={() => clearErrorOnChange(enhancePromptField.name, false)}
-                              scaleTo={0.96}
-                              className={`studio-switch-btn ${!isEnhanceActive ? 'is-active' : ''}`}
-                            >
-                              Off
-                            </Pressable>
-                            <Pressable
-                              disabled={disabled}
-                              aria-pressed={isEnhanceActive}
-                              aria-label={`${enhancePromptField.label} On`}
-                              onClick={() => clearErrorOnChange(enhancePromptField.name, true)}
-                              scaleTo={0.96}
-                              className={`studio-switch-btn ${isEnhanceActive ? 'is-active-on' : ''}`}
-                            >
-                              On
-                            </Pressable>
-                          </div>
-                        </div>
-                      )
-                    })()}
-                    <FieldError
-                      message={enhancePromptField ? fieldErrors?.[enhancePromptField.name] : undefined}
-                      id={enhancePromptField ? `${fieldId(enhancePromptField.name)}-error` : undefined}
-                    />
-                    <PromptOptimizePanel
-                      prompt={typeof value === 'string' ? value : ''}
-                      modelId={modelId}
-                      disabled={disabled}
-                      onApply={(optimized) =>
-                        clearErrorOnChange(field.name, optimized)
-                      }
-                    />
-                    <PromptSnippets
-                      prompt={typeof value === 'string' ? value : ''}
-                      disabled={disabled}
-                      onInsert={insertIntoPrompt}
-                    />
-                  </>
-                )}
-              </div>
-            )
-          case 'string':
-            return (
-              <div key={field.name} className={wrap}>
-                <FieldLabel field={field} htmlFor={id} />
-                <input
-                  id={id}
-                  type="text"
-                  aria-label={field.label}
-                  className={inputClass}
-                  value={typeof value === 'string' ? value : ''}
-                  maxLength={field.maxLength}
+                <PromptSnippets
+                  prompt={typeof value === 'string' ? value : ''}
                   disabled={disabled}
-                  aria-invalid={Boolean(error)}
-                  aria-describedby={error ? `${id}-error` : undefined}
-                  onChange={(e) =>
-                    clearErrorOnChange(field.name, e.target.value)
-                  }
+                  onInsert={insertIntoPrompt}
                 />
-                <FieldError message={error} id={`${id}-error`} />
-              </div>
-            )
-          case 'number':
-            return (
-              <div key={field.name} className={wrap}>
-                <FieldLabel field={field} htmlFor={id} />
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    className="flex-1 accent-[var(--accent)]"
-                    min={field.min ?? 0}
-                    max={field.max ?? 100}
-                    step={field.step ?? 1}
-                    disabled={disabled}
-                    aria-label={field.label}
-                    value={
-                      typeof value === 'number'
-                        ? value
-                        : Number(field.default ?? field.min ?? 0)
-                    }
-                    onChange={(e) =>
-                      clearErrorOnChange(field.name, Number(e.target.value))
-                    }
-                  />
-                  <input
-                    id={id}
-                    type="number"
-                    aria-label={field.label}
-                    className={`${inputClass} w-24`}
-                    min={field.min}
-                    max={field.max}
-                    step={field.step ?? 1}
-                    disabled={disabled}
-                    aria-invalid={Boolean(error)}
-                    aria-describedby={error ? `${id}-error` : undefined}
-                    value={
-                      typeof value === 'number'
-                        ? value
-                        : Number(field.default ?? 0)
-                    }
-                    onChange={(e) =>
-                      clearErrorOnChange(field.name, Number(e.target.value))
-                    }
-                  />
-                </div>
-                <FieldError message={error} id={`${id}-error`} />
-              </div>
-            )
-          case 'boolean': {
-            const on = Boolean(value)
-            return (
-              <div key={field.name} className="first:pt-0">
-                <BooleanToggle
-                  id={id}
-                  field={field}
-                  on={on}
-                  disabled={disabled}
-                  error={error}
-                  onChange={(next) => clearErrorOnChange(field.name, next)}
-                />
-              </div>
-            )
-          }
-          case 'enum':
-            return (
-              <div key={field.name} className={wrap}>
-                <FieldLabel field={field} htmlFor={id} />
-                <select
-                  id={id}
-                  aria-label={field.label}
-                  className="studio-select w-full"
-                  value={
-                    typeof value === 'string'
-                      ? value
-                      : String(field.default ?? field.enum?.[0] ?? '')
-                  }
-                  disabled={disabled}
-                  aria-invalid={Boolean(error)}
-                  aria-describedby={error ? `${id}-error` : undefined}
-                  onChange={(e) =>
-                    clearErrorOnChange(field.name, e.target.value)
-                  }
-                >
-                  {(field.enum ?? []).map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-                <FieldError message={error} id={`${id}-error`} />
-              </div>
-            )
-          case 'reference': {
-            const max = field.maxItems ?? 8
-            const media = acceptHint(field.accept)
-            const hint = [`Up to ${max} ${max === 1 ? 'file' : 'files'}`, media].filter(Boolean).join(' · ')
-            return (
-              <div key={field.name} className={wrap}>
-                <FieldLabel field={field} htmlFor={id} hint={hint} />
-                <ReferenceUpload
-                  inputId={id}
-                  value={Array.isArray(value) ? (value as string[]) : []}
-                  onChange={(urls) => clearErrorOnChange(field.name, urls)}
-                  maxItems={max}
-                  accept={field.accept}
-                  maxFileSizeMb={field.maxFileSizeMb}
-                  maxDurationSec={field.maxDurationSec}
-                  disabled={disabled}
-                  mentionStyle={resolveMentionStyle(field)}
-                  onInsertMention={
-                    promptFieldName ? insertIntoPrompt : undefined
-                  }
-                />
-                <FieldError message={error} id={`${id}-error`} />
-              </div>
-            )
-          }
-          case 'kling_elements':
-            return (
-              <div
-                key={field.name}
-                className={wrap}
+              </>
+            )}
+          </div>
+        )
+      case 'string':
+        return (
+          <div key={field.name} className={wrap}>
+            <FieldLabel field={field} htmlFor={id} />
+            <input
+              id={id}
+              type="text"
+              aria-label={field.label}
+              className={inputClass}
+              value={typeof value === 'string' ? value : ''}
+              maxLength={field.maxLength}
+              disabled={disabled}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? `${id}-error` : undefined}
+              onChange={(e) =>
+                clearErrorOnChange(field.name, e.target.value)
+              }
+            />
+            <FieldError message={error} id={`${id}-error`} />
+          </div>
+        )
+      case 'number':
+        return (
+          <div key={field.name} className={wrap}>
+            <FieldLabel field={field} htmlFor={id} />
+            <div className="flex items-center gap-3">
+              <input
+                type="range"
+                className="flex-1 accent-[var(--accent)]"
+                min={field.min ?? 0}
+                max={field.max ?? 100}
+                step={field.step ?? 1}
+                disabled={disabled}
+                aria-label={field.label}
+                value={
+                  typeof value === 'number'
+                    ? value
+                    : Number(field.default ?? field.min ?? 0)
+                }
+                onChange={(e) =>
+                  clearErrorOnChange(field.name, Number(e.target.value))
+                }
+              />
+              <input
                 id={id}
-                tabIndex={-1}
-              >
-                <FieldLabel
-                  field={field}
-                  hint={`Up to ${field.maxItems ?? 3} items`}
-                />
-                <KlingElementsEditor
-                  value={Array.isArray(value) ? (value as KlingElement[]) : []}
-                  onChange={(next) => clearErrorOnChange(field.name, next)}
-                  maxItems={field.maxItems ?? 3}
-                  disabled={disabled}
-                  onInsertMention={
-                    promptFieldName ? insertIntoPrompt : undefined
-                  }
-                />
-                <FieldError message={error} id={`${id}-error`} />
-              </div>
-            )
-          case 'json':
-            if (modelId === 'market/elevenlabs-dialogue' && field.name === 'dialogue') {
-              return (
-                <div key={field.name} className={wrap} id={id} tabIndex={-1}>
-                  <FieldLabel field={field} />
-                  <DialogueEditor
-                    value={value}
-                    disabled={disabled}
-                    onChange={(next) => clearErrorOnChange(field.name, next)}
-                  />
-                  <FieldError message={error} id={`${id}-error`} />
-                </div>
-              )
-            }
-            return (
-              <div key={field.name} className={wrap}>
-                <FieldLabel field={field} htmlFor={id} />
-                <textarea
-                  id={id}
-                  className={`${inputClass} min-h-24 font-mono text-xs`}
-                  disabled={disabled}
-                  aria-invalid={Boolean(error)}
-                  aria-describedby={error ? `${id}-error` : undefined}
-                  value={
-                    typeof value === 'string'
-                      ? value
-                      : value !== undefined
-                        ? JSON.stringify(value, null, 2)
-                        : ''
-                  }
-                  onChange={(e) => {
-                    const raw = e.target.value
-                    try {
-                      clearErrorOnChange(field.name, JSON.parse(raw))
-                    } catch {
-                      clearErrorOnChange(field.name, raw)
-                    }
-                  }}
-                  placeholder="{ }"
-                />
-                <FieldError message={error} id={`${id}-error`} />
-              </div>
-            )
+                type="number"
+                aria-label={field.label}
+                className={`${inputClass} w-24`}
+                min={field.min}
+                max={field.max}
+                step={field.step ?? 1}
+                disabled={disabled}
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? `${id}-error` : undefined}
+                value={
+                  typeof value === 'number'
+                    ? value
+                    : Number(field.default ?? 0)
+                }
+                onChange={(e) =>
+                  clearErrorOnChange(field.name, Number(e.target.value))
+                }
+              />
+            </div>
+            <FieldError message={error} id={`${id}-error`} />
+          </div>
+        )
+      case 'boolean': {
+        const on = Boolean(value)
+        return (
+          <div key={field.name} className="first:pt-0">
+            <BooleanToggle
+              id={id}
+              field={field}
+              on={on}
+              disabled={disabled}
+              error={error}
+              onChange={(next) => clearErrorOnChange(field.name, next)}
+            />
+          </div>
+        )
+      }
+      case 'enum':
+        return (
+          <div key={field.name} className={wrap}>
+            <FieldLabel field={field} htmlFor={id} />
+            <select
+              id={id}
+              aria-label={field.label}
+              className="studio-select w-full"
+              value={
+                typeof value === 'string'
+                  ? value
+                  : String(field.default ?? field.enum?.[0] ?? '')
+              }
+              disabled={disabled}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? `${id}-error` : undefined}
+              onChange={(e) =>
+                clearErrorOnChange(field.name, e.target.value)
+              }
+            >
+              {(field.enum ?? []).map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <FieldError message={error} id={`${id}-error`} />
+          </div>
+        )
+      case 'reference': {
+        const max = field.maxItems ?? 8
+        const media = acceptHint(field.accept)
+        const hint = [`Up to ${max} ${max === 1 ? 'file' : 'files'}`, media].filter(Boolean).join(' · ')
+        return (
+          <div key={field.name} className={wrap}>
+            <FieldLabel field={field} htmlFor={id} hint={hint} />
+            <ReferenceUpload
+              inputId={id}
+              value={Array.isArray(value) ? (value as string[]) : []}
+              onChange={(urls) => clearErrorOnChange(field.name, urls)}
+              maxItems={max}
+              accept={field.accept}
+              maxFileSizeMb={field.maxFileSizeMb}
+              maxDurationSec={field.maxDurationSec}
+              disabled={disabled}
+              mentionStyle={resolveMentionStyle(field)}
+              onInsertMention={
+                promptFieldName ? insertIntoPrompt : undefined
+              }
+            />
+            <FieldError message={error} id={`${id}-error`} />
+          </div>
+        )
+      }
+      case 'kling_elements':
+        return (
+          <div
+            key={field.name}
+            className={wrap}
+            id={id}
+            tabIndex={-1}
+          >
+            <FieldLabel
+              field={field}
+              hint={`Up to ${field.maxItems ?? 3} items`}
+            />
+            <KlingElementsEditor
+              value={Array.isArray(value) ? (value as KlingElement[]) : []}
+              onChange={(next) => clearErrorOnChange(field.name, next)}
+              maxItems={field.maxItems ?? 3}
+              disabled={disabled}
+              onInsertMention={
+                promptFieldName ? insertIntoPrompt : undefined
+              }
+            />
+            <FieldError message={error} id={`${id}-error`} />
+          </div>
+        )
+      case 'json':
+        if (modelId === 'market/elevenlabs-dialogue' && field.name === 'dialogue') {
+          return (
+            <div key={field.name} className={wrap} id={id} tabIndex={-1}>
+              <FieldLabel field={field} />
+              <DialogueEditor
+                value={value}
+                disabled={disabled}
+                onChange={(next) => clearErrorOnChange(field.name, next)}
+              />
+              <FieldError message={error} id={`${id}-error`} />
+            </div>
+          )
+        }
+        return (
+          <div key={field.name} className={wrap}>
+            <FieldLabel field={field} htmlFor={id} />
+            <textarea
+              id={id}
+              className={`${inputClass} min-h-24 font-mono text-xs`}
+              disabled={disabled}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? `${id}-error` : undefined}
+              value={
+                typeof value === 'string'
+                  ? value
+                  : value !== undefined
+                    ? JSON.stringify(value, null, 2)
+                    : ''
+              }
+              onChange={(e) => {
+                const raw = e.target.value
+                try {
+                  clearErrorOnChange(field.name, JSON.parse(raw))
+                } catch {
+                  clearErrorOnChange(field.name, raw)
+                }
+              }}
+              placeholder="{ }"
+            />
+            <FieldError message={error} id={`${id}-error`} />
+          </div>
+        )
       default: {
         const _exhaustive: never = field.type
         return _exhaustive
