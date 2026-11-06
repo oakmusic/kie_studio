@@ -1,9 +1,8 @@
 import { exec } from 'node:child_process'
 import { mkdirSync } from 'node:fs'
 import { Hono } from 'hono'
-import { deleteSetting } from '../db/settings.ts'
 import {
-  KIE_API_KEY_SETTING,
+  deleteStoredApiKey,
   getStoredApiKey,
   hasStoredApiKeyInStore,
   hasUsableApiKey,
@@ -51,7 +50,7 @@ settingsRoutes.put('/settings/api-key', validateJson(apiKeySchema), (c) => {
 })
 
 settingsRoutes.delete('/settings/api-key', (c) => {
-  deleteSetting(KIE_API_KEY_SETTING)
+  deleteStoredApiKey()
   return c.json({ data: { hasApiKey: hasUsableApiKey() } })
 })
 

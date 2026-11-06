@@ -18,6 +18,7 @@ import {
   validateFields,
 } from './lib/form.ts'
 import { DynamicForm } from './components/DynamicForm.tsx'
+import { QuickSettingsBar } from './components/QuickSettingsBar.tsx'
 import { CreditBadge } from './components/CreditBadge.tsx'
 import { HistoryGallery } from './components/HistoryGallery.tsx'
 import {
@@ -528,6 +529,7 @@ export default function App() {
                 disabled={submitting}
                 fieldErrors={fieldErrors}
                 modelId={selected.id}
+                hideQuickFields={true}
               />
 
               {selected.provider === 'suno' && values.customMode !== false && selected.fields.some((field) => field.name === 'style') && (
@@ -666,31 +668,15 @@ export default function App() {
                     <span className="ml-1 shrink-0 font-semibold underline underline-offset-2">Go to first issue</span>
                   </button>
                 )}
-                <div className="flex items-center justify-between gap-2">
-                  <div
-                    className="flex items-center gap-1.5"
-                    role="group"
-                    aria-label="Batch generation count"
-                  >
-                    <span className="mr-1 text-xs font-medium text-[var(--text-muted)]">
-                      Batch
-                    </span>
-                    {[1, 2, 3, 4].map((n) => (
-                      <Pressable
-                        key={n}
-                        disabled={submitting}
-                        aria-pressed={batchCount === n}
-                        onClick={() => setBatchCount(n)}
-                        className={`studio-chip ${
-                          batchCount === n ? 'is-active' : ''
-                        }`}
-                        scaleTo={0.96}
-                      >
-                        ×{n}
-                      </Pressable>
-                    ))}
-                  </div>
-                </div>
+                <QuickSettingsBar
+                  fields={selected.fields}
+                  values={values}
+                  onChange={handleFieldChange}
+                  batchCount={batchCount}
+                  onBatchCountChange={setBatchCount}
+                  creditEstimate={creditEstimate}
+                  disabled={submitting}
+                />
                 <Pressable
                   disabled={generateDisabled}
                   onClick={() => {

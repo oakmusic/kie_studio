@@ -108,7 +108,7 @@ export function StudioShell({
             {agent}
           </Material>
         ) : (
-          <div className="flex min-h-0 flex-1 overflow-hidden lg:grid lg:grid-cols-[minmax(380px,440px)_1fr] lg:gap-3">
+          <div className="flex min-h-0 flex-1 overflow-hidden lg:grid lg:grid-cols-[minmax(450px,500px)_1fr] lg:gap-3">
             <Material
               weight="panel"
               className={`material-panel-heavy min-h-0 flex-1 flex-col overflow-hidden rounded-[var(--radius-xl)] lg:flex ${mobileView === 'create' ? 'flex' : 'hidden'}`}

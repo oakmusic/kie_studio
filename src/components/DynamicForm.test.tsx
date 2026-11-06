@@ -169,4 +169,32 @@ describe('DynamicForm', () => {
     expect(qualitySelect.value).toBe('auto')
     expect(qualitySelect.options[0]?.value).toBe('auto')
   })
+
+  it('never renders num_images field as it is handled by batch count', () => {
+    renderForm(
+      [
+        { name: 'prompt', type: 'textarea', label: 'Prompt' },
+        { name: 'num_images', type: 'number', label: 'Num Images', default: 1 },
+      ],
+      { prompt: 'test', num_images: 1 },
+    )
+    expect(screen.queryByLabelText(/Num Images/i)).not.toBeInTheDocument()
+  })
+
+  it('hides aspect_ratio, resolution and background when hideQuickFields is true', () => {
+    renderForm(
+      [
+        { name: 'prompt', type: 'textarea', label: 'Prompt' },
+        { name: 'aspect_ratio', type: 'enum', label: 'Aspect Ratio', enum: ['1:1', '16:9'] },
+        { name: 'resolution', type: 'enum', label: 'Resolution', enum: ['1K', '2K'] },
+        { name: 'background', type: 'enum', label: 'Background', enum: ['auto', 'transparent', 'opaque'] },
+      ],
+      { prompt: 'test', aspect_ratio: '1:1', resolution: '1K', background: 'auto' },
+      { hideQuickFields: true },
+    )
+    expect(screen.queryByRole('combobox', { name: 'Aspect Ratio' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('combobox', { name: 'Resolution' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('combobox', { name: 'Background' })).not.toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Prompt' })).toBeInTheDocument()
+  })
 })

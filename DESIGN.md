@@ -11,7 +11,7 @@ Guía de Diseño e Identidad Visual de Software. Especificación normativa para 
 KIE STUDIO no es una landing page de marketing, ni un chatbot conversacional genérico, ni una consola oscura de hacker. Es un **instrumento de precisión para creadores multimedia** (diseñadores, cineastas, compositores sonoros y directores de arte) que ejecutan iteraciones repetitivas de generación local y en la nube.
 
 - **Mesa de Trabajo Dividida:**
-  - **Izquierda:** La *Caja de Herramientas* (Toolbox / Creation Form) de ancho calibrado (400–440px), optimizada para entrada de parámetros densa, rápida y sin fatiga.
+  - **Izquierda:** La *Caja de Herramientas* (Toolbox / Creation Form) de ancho calibrado (450–500px), optimizada para entrada de parámetros densa, rápida y sin fatiga.
   - **Derecha:** El *Lienzo y Galería de Inspección* (Canvas / Monitor), donde los resultados visuales y auditivos tienen la máxima superficie y contraste sin interferencias.
 - **Luz Natural de Taller (*Precision Light*):** Rechazo explícito tanto al modo oscuro "cine" (que cansa la vista en jornadas de edición diurnas) como al papel crema editorial vintage (que falsea la percepción del color en imágenes generadas). El fondo es un gris técnico neutro y frío con sutil tinte azul de tinta.
 
@@ -160,7 +160,7 @@ DESKTOP (≥1024px)
 │ Floating Chrome (Brand · Mode Toggle · Credits · Sett) │
 ├──────────────────────────┬─────────────────────────────┤
 │ ToolBox (Create Form)    │ Canvas & Media Gallery      │
-│ Width: 400–440px         │ Flexible: 1fr               │
+│ Width: 450–500px         │ Flexible: 1fr               │
 │ Scroll independiente     │ Virtualized Grid (2–4 cols) │
 │ Sticky CTA sólido        │ Audio Player Dock           │
 └──────────────────────────┴─────────────────────────────┘

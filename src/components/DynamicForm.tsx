@@ -9,6 +9,7 @@ import {
   presentField,
   shouldShowTechnicalDescription,
 } from '../lib/studioPresentation.ts'
+import { QUICK_SETTING_NAMES } from './QuickSettingsBar.tsx'
 import { ReferenceUpload } from './ReferenceUpload.tsx'
 import { KlingElementsEditor } from './KlingElementsEditor.tsx'
 import { PromptOptimizePanel } from './PromptOptimizePanel.tsx'
@@ -196,6 +197,7 @@ export function DynamicForm({
   disabled,
   fieldErrors,
   modelId,
+  hideQuickFields = false,
 }: {
   fields: FieldSchema[]
   values: Record<string, unknown>
@@ -203,6 +205,7 @@ export function DynamicForm({
   disabled?: boolean
   fieldErrors?: Record<string, string>
   modelId?: string | null
+  hideQuickFields?: boolean
 }) {
   const promptRef = useRef<HTMLTextAreaElement | null>(null)
   const [advancedOpen, setAdvancedOpen] = useState(false)
@@ -216,6 +219,14 @@ export function DynamicForm({
     () => sortFieldsForDisplay(fields).filter((field) => {
       if (field.name.startsWith('_')) return false
       if (field.name === 'width' || field.name === 'height') return false
+      if (
+        field.name === 'num_images' ||
+        field.name === 'number_of_images' ||
+        field.name === 'image_num'
+      ) return false
+      if (hideQuickFields && QUICK_SETTING_NAMES.has(field.name.toLowerCase())) {
+        return false
+      }
       if (promptFieldName && isEnhancePromptField(field)) return false
       if (
         modelId === 'market/elevenlabs-tts' &&
@@ -232,7 +243,7 @@ export function DynamicForm({
       }
       return true
     }),
-    [fields, modelId, promptFieldName, values.customMode],
+    [fields, hideQuickFields, modelId, promptFieldName, values.customMode],
   )
 
   function insertIntoPrompt(token: string) {
@@ -303,7 +314,7 @@ export function DynamicForm({
     const value = values[field.name]
     const error = fieldErrors?.[field.name]
     const id = fieldId(field.name)
-    const wrap = 'py-4 first:pt-0'
+    const wrap = 'py-2.5 first:pt-0'
 
     switch (field.type) {
       case 'textarea':
@@ -500,7 +511,7 @@ export function DynamicForm({
             <select
               id={id}
               aria-label={field.label}
-              className="studio-select w-full"
+              className="studio-select w-full max-w-sm"
               value={
                 typeof value === 'string'
                   ? value

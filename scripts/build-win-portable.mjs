@@ -291,7 +291,7 @@ class Program
   }
 
   // --- 3. ZIP パッケージ化 ---
-  const zipName = `${channel}-win-x64-KIESTUDIO-Portable.zip`
+  const zipName = `KIESTUDIO-${version}-win-x64-portable.zip`
   const targetZip = join(releaseDir, zipName)
 
   if (existsSync(targetZip)) {
@@ -304,15 +304,8 @@ class Program
   const zipStat = statSync(targetZip)
   console.log(`[win-portable] Successfully created ${zipName} (${(zipStat.size / 1024 / 1024).toFixed(2)} MB)`)
 
-  // 便利用バージョン明記ファイル (例: KIESTUDIO-1.0.23-win-x64-portable.zip)
-  const friendlyZipName = `KIESTUDIO-${version}-win-x64-portable.zip`
-  const friendlyZip = join(releaseDir, friendlyZipName)
-  cpSync(targetZip, friendlyZip, { force: true })
-  console.log(`[win-portable] Copied to ${friendlyZipName}`)
-
   if (existsSync(artifactsDir)) {
     cpSync(targetZip, join(artifactsDir, zipName), { force: true })
-    cpSync(targetZip, join(artifactsDir, friendlyZipName), { force: true })
     console.log(`[win-portable] Synced to artifacts/`)
   }
 } finally {

@@ -50,11 +50,13 @@ describe('API key store', () => {
     dbDir = mkdtempSync(join(tmpdir(), 'kie-apikey-'))
     process.env.STUDIO_DB_PATH = join(dbDir, 'studio.db')
     process.env.STUDIO_SECRET_KEY = MASTER_KEY
+    process.env.STUDIO_CREDENTIALS_PATH = join(dbDir, 'credentials.json')
     delete process.env.KIE_API_KEY
   })
 
   afterAll(() => {
     rmSync(dbDir, { recursive: true, force: true })
+    delete process.env.STUDIO_CREDENTIALS_PATH
   })
 
   it('persists the key encrypted at rest and reads it back decrypted', async () => {
@@ -73,5 +75,20 @@ describe('API key store', () => {
 
     expect(getStoredApiKey()).toBe('sk-secret-value-9999')
     expect(hasStoredApiKeyInStore()).toBe(true)
+  })
+
+  it('recovers key from machine credentials when local DB is cleared (simulating version update/new portable)', async () => {
+    const { getStoredApiKey, deleteStoredApiKey } = await import('./apiKey.ts')
+    const { deleteSetting } = await import('../db/settings.ts')
+
+    // Simulate new DB in a new portable version: clear the DB setting only
+    deleteSetting('KIE_API_KEY')
+
+    // getStoredApiKey should automatically recover from machine credentials file
+    expect(getStoredApiKey()).toBe('sk-secret-value-9999')
+
+    // When explicitly deleting the stored key, it removes it from machine storage too
+    deleteStoredApiKey()
+    expect(getStoredApiKey()).toBeNull()
   })
 })
