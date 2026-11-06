@@ -1,4 +1,5 @@
 import type { FieldSchema, KlingElement } from './models/types.ts'
+import { presentField } from './studioPresentation.ts'
 
 function fieldId(name: string): string {
   return `field-${name}`
@@ -8,7 +9,8 @@ export function buildDefaultValues(
   fields: FieldSchema[],
 ): Record<string, unknown> {
   const values: Record<string, unknown> = {}
-  for (const field of fields) {
+  for (const rawField of fields) {
+    const field = presentField(rawField)
     if (field.default !== undefined) {
       values[field.name] = field.default
       continue

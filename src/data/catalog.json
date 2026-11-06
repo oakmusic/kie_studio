@@ -1890,10 +1890,27 @@
           "label": "Background",
           "description": "Image background",
           "required": false,
+          "default": "auto",
           "enum": [
+            "auto",
             "transparent",
-            "opaque",
-            "auto"
+            "opaque"
+          ]
+        },
+        {
+          "name": "quality",
+          "type": "enum",
+          "label": "Quality",
+          "description": "Image generation quality. auto lets the model choose.",
+          "required": false,
+          "default": "auto",
+          "enum": [
+            "auto",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
           ]
         }
       ]
@@ -1963,10 +1980,27 @@
           "label": "Background",
           "description": "Image background",
           "required": false,
+          "default": "auto",
           "enum": [
+            "auto",
             "transparent",
-            "opaque",
-            "auto"
+            "opaque"
+          ]
+        },
+        {
+          "name": "quality",
+          "type": "enum",
+          "label": "Quality",
+          "description": "Image generation quality. auto lets the model choose.",
+          "required": false,
+          "default": "auto",
+          "enum": [
+            "auto",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
           ]
         }
       ]
@@ -2027,10 +2061,27 @@
           "label": "Background",
           "description": "Image background",
           "required": false,
+          "default": "auto",
           "enum": [
+            "auto",
             "transparent",
-            "opaque",
-            "auto"
+            "opaque"
+          ]
+        },
+        {
+          "name": "quality",
+          "type": "enum",
+          "label": "Quality",
+          "description": "Image generation quality. auto lets the model choose.",
+          "required": false,
+          "default": "auto",
+          "enum": [
+            "auto",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
           ]
         }
       ]
@@ -2100,10 +2151,27 @@
           "label": "Background",
           "description": "Image background",
           "required": false,
+          "default": "auto",
           "enum": [
+            "auto",
             "transparent",
-            "opaque",
-            "auto"
+            "opaque"
+          ]
+        },
+        {
+          "name": "quality",
+          "type": "enum",
+          "label": "Quality",
+          "description": "Image generation quality. auto lets the model choose.",
+          "required": false,
+          "default": "auto",
+          "enum": [
+            "auto",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
           ]
         }
       ]
@@ -2164,10 +2232,27 @@
           "label": "Background",
           "description": "Image background",
           "required": false,
+          "default": "auto",
           "enum": [
+            "auto",
             "transparent",
-            "opaque",
-            "auto"
+            "opaque"
+          ]
+        },
+        {
+          "name": "quality",
+          "type": "enum",
+          "label": "Quality",
+          "description": "Image generation quality. auto lets the model choose.",
+          "required": false,
+          "default": "auto",
+          "enum": [
+            "auto",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
           ]
         }
       ]
@@ -2214,11 +2299,16 @@
           "name": "quality",
           "type": "enum",
           "label": "Quality",
-          "description": "Required. Quality: medium=balanced, high=slow/detailed.",
-          "required": true,
+          "description": "Image generation quality. auto lets the model choose.",
+          "required": false,
+          "default": "auto",
           "enum": [
+            "auto",
+            "low",
             "medium",
-            "high"
+            "high",
+            "xhigh",
+            "max"
           ]
         }
       ]
@@ -2254,11 +2344,16 @@
           "name": "quality",
           "type": "enum",
           "label": "Quality",
-          "description": "Required. Quality: medium=balanced, high=slow/detailed.",
-          "required": true,
+          "description": "Image generation quality. auto lets the model choose.",
+          "required": false,
+          "default": "auto",
           "enum": [
+            "auto",
+            "low",
             "medium",
-            "high"
+            "high",
+            "xhigh",
+            "max"
           ]
         }
       ]
@@ -2322,10 +2417,27 @@
           "label": "Background",
           "description": "Image background",
           "required": false,
+          "default": "auto",
           "enum": [
+            "auto",
             "transparent",
-            "opaque",
-            "auto"
+            "opaque"
+          ]
+        },
+        {
+          "name": "quality",
+          "type": "enum",
+          "label": "Quality",
+          "description": "Image generation quality. auto lets the model choose.",
+          "required": false,
+          "default": "auto",
+          "enum": [
+            "auto",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
           ]
         }
       ]
@@ -3682,8 +3794,9 @@
           "label": "Background",
           "description": "Background type. transparent outputs a PNG or WebP with a real alpha channel and cannot be used with JPEG. When using transparent, describe only the subject — prompts that mention a background, scene, surface, etc. may produce a non-transparent result.",
           "required": false,
-          "default": "opaque",
+          "default": "auto",
           "enum": [
+            "auto",
             "opaque",
             "transparent"
           ]
@@ -3779,8 +3892,9 @@
           "label": "Background",
           "description": "Background type. transparent outputs a PNG or WebP with a real alpha channel and cannot be used with JPEG. When using transparent, describe only the subject — prompts that mention a background, scene, surface, etc. may produce a non-transparent result.",
           "required": false,
-          "default": "opaque",
+          "default": "auto",
           "enum": [
+            "auto",
             "opaque",
             "transparent"
           ]

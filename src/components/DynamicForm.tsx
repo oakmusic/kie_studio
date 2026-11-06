@@ -5,6 +5,7 @@ import {
   conciseFieldDescription,
   fieldConstraintHint,
   isAdvancedField,
+  isEnhancePromptField,
   presentField,
   shouldShowTechnicalDescription,
 } from '../lib/studioPresentation.ts'
@@ -157,11 +158,12 @@ function resolveMentionStyle(field: FieldSchema): MentionStyle {
   return 'none'
 }
 
-/** Display order: media refs → prompt → rest (payload keys unchanged). */
+/** Display order: media refs → prompt → enhance prompt → rest (payload keys unchanged). */
 function sortFieldsForDisplay(fields: FieldSchema[]): FieldSchema[] {
   const modes: FieldSchema[] = []
   const media: FieldSchema[] = []
   const prompts: FieldSchema[] = []
+  const enhance: FieldSchema[] = []
   const rest: FieldSchema[] = []
 
   for (const field of fields) {
@@ -171,6 +173,8 @@ function sortFieldsForDisplay(fields: FieldSchema[]): FieldSchema[] {
       media.push(field)
     } else if (field.type === 'textarea') {
       prompts.push(field)
+    } else if (isEnhancePromptField(field)) {
+      enhance.push(field)
     } else {
       rest.push(field)
     }
@@ -182,7 +186,7 @@ function sortFieldsForDisplay(fields: FieldSchema[]): FieldSchema[] {
     return 0
   })
 
-  return [...modes, ...media, ...prompts, ...rest]
+  return [...modes, ...media, ...prompts, ...enhance, ...rest]
 }
 
 export function DynamicForm({
@@ -202,10 +206,17 @@ export function DynamicForm({
 }) {
   const promptRef = useRef<HTMLTextAreaElement | null>(null)
   const [advancedOpen, setAdvancedOpen] = useState(false)
+  const promptFieldName =
+    fields.find((f) => f.name === 'prompt' && f.type === 'textarea')?.name ??
+    fields.find((f) => f.type === 'textarea')?.name ??
+    null
+  const enhancePromptField = fields.find(isEnhancePromptField) ?? null
+
   const orderedFields = useMemo(
     () => sortFieldsForDisplay(fields).filter((field) => {
       if (field.name.startsWith('_')) return false
       if (field.name === 'width' || field.name === 'height') return false
+      if (promptFieldName && isEnhancePromptField(field)) return false
       if (
         modelId === 'market/elevenlabs-tts' &&
         (field.name === 'previous_text' || field.name === 'next_text')
@@ -221,12 +232,8 @@ export function DynamicForm({
       }
       return true
     }),
-    [fields, modelId, values.customMode],
+    [fields, modelId, promptFieldName, values.customMode],
   )
-  const promptFieldName =
-    fields.find((f) => f.name === 'prompt' && f.type === 'textarea')?.name ??
-    fields.find((f) => f.type === 'textarea')?.name ??
-    null
 
   function insertIntoPrompt(token: string) {
     if (!promptFieldName) return
@@ -337,8 +344,56 @@ export function DynamicForm({
                   }
                 />
                 <FieldError message={error} id={`${id}-error`} />
-                {field.name === 'prompt' && (
+                {field.name === promptFieldName && (
                   <>
+                    {enhancePromptField && (() => {
+                      const isEnhanceActive =
+                        typeof values[enhancePromptField.name] === 'boolean'
+                          ? Boolean(values[enhancePromptField.name])
+                          : enhancePromptField.default !== false
+                      return (
+                        <div className="mt-2.5 flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2">
+                          <div className="min-w-0 flex-1">
+                            <span className="text-xs font-semibold text-[var(--text)]">
+                              {enhancePromptField.label}
+                            </span>
+                            <p className="text-[11px] leading-tight text-[var(--text-muted)]">
+                              Rewrites prompt into a fuller description for higher quality
+                            </p>
+                          </div>
+                          <div
+                            role="group"
+                            aria-label={enhancePromptField.label}
+                            className="studio-switch-group shrink-0"
+                          >
+                            <Pressable
+                              disabled={disabled}
+                              aria-pressed={!isEnhanceActive}
+                              aria-label={`${enhancePromptField.label} Off`}
+                              onClick={() => clearErrorOnChange(enhancePromptField.name, false)}
+                              scaleTo={0.96}
+                              className={`studio-switch-btn ${!isEnhanceActive ? 'is-active' : ''}`}
+                            >
+                              Off
+                            </Pressable>
+                            <Pressable
+                              disabled={disabled}
+                              aria-pressed={isEnhanceActive}
+                              aria-label={`${enhancePromptField.label} On`}
+                              onClick={() => clearErrorOnChange(enhancePromptField.name, true)}
+                              scaleTo={0.96}
+                              className={`studio-switch-btn ${isEnhanceActive ? 'is-active-on' : ''}`}
+                            >
+                              On
+                            </Pressable>
+                          </div>
+                        </div>
+                      )
+                    })()}
+                    <FieldError
+                      message={enhancePromptField ? fieldErrors?.[enhancePromptField.name] : undefined}
+                      id={enhancePromptField ? `${fieldId(enhancePromptField.name)}-error` : undefined}
+                    />
                     <PromptOptimizePanel
                       prompt={typeof value === 'string' ? value : ''}
                       modelId={modelId}

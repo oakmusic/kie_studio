@@ -85,6 +85,15 @@ export function propertyToField(
   if (Array.isArray(prop.enum)) {
     field.enum = prop.enum.filter((v): v is string => typeof v === 'string')
   }
+  if (name.trim().toLowerCase() === 'background') {
+    field.default = prop.default ?? 'auto'
+    if (field.enum) {
+      const hasAuto = field.enum.includes('auto')
+      field.enum = hasAuto
+        ? ['auto', ...field.enum.filter((v) => v !== 'auto')]
+        : ['auto', ...field.enum]
+    }
+  }
   if (typeof prop.minimum === 'number') field.min = prop.minimum
   if (typeof prop.maximum === 'number') field.max = prop.maximum
   if (typeof prop.maxLength === 'number') field.maxLength = prop.maxLength

@@ -63,6 +63,49 @@ function hydrateDedicatedModel(
   }
 }
 
+function normalizeCatalogModel(model: ModelDefinition): ModelDefinition {
+  const isGptImage = model.id.includes('gpt-image') || model.model.includes('gpt-image')
+  if (!isGptImage) return model
+
+  let fields = [...model.fields]
+  const qualityIndex = fields.findIndex((f) => f.name === 'quality')
+  const gptQualityField: FieldSchema = {
+    name: 'quality',
+    type: 'enum',
+    label: 'Quality',
+    description: 'Image generation quality. auto lets the model choose.',
+    required: false,
+    default: 'auto',
+    enum: ['auto', 'low', 'medium', 'high', 'xhigh', 'max'],
+  }
+  if (qualityIndex >= 0) {
+    fields[qualityIndex] = {
+      ...fields[qualityIndex],
+      ...gptQualityField,
+    }
+  } else {
+    fields.push(gptQualityField)
+  }
+
+  fields = fields.map((field) => {
+    if (field.name === 'background') {
+      const rawEnum = field.enum ?? []
+      const hasAuto = rawEnum.includes('auto')
+      const enumValues = hasAuto
+        ? ['auto', ...rawEnum.filter((opt) => opt !== 'auto')]
+        : ['auto', ...rawEnum]
+      return {
+        ...field,
+        default: 'auto',
+        enum: enumValues,
+      }
+    }
+    return field
+  })
+
+  return { ...model, fields }
+}
+
 export interface MergedModelsResult {
   syncedAt: string | null
   source: string
@@ -83,6 +126,7 @@ export async function listMergedModels(): Promise<MergedModelsResult | null> {
           (item) => item.provider === model.provider && item.model === model.model,
         ) === index,
     )
+    .map(normalizeCatalogModel)
     .map(withUseCase)
   return { syncedAt: catalog.syncedAt, source: catalog.source, models }
 }

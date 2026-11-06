@@ -46,9 +46,57 @@ function isNsfwChecker(field: FieldSchema): boolean {
   return field.label === 'Nsfw Checker' || normalizedName(field.name) === 'nsfw_checker'
 }
 
+export function isEnhancePromptField(field: FieldSchema): boolean {
+  const name = normalizedName(field.name)
+  return (
+    name === 'enhance_prompt' ||
+    name === 'enhanceprompt' ||
+    name === 'prompt_optimizer' ||
+    name === 'promptoptimizer' ||
+    field.label.trim().toLowerCase() === 'enhance prompt'
+  )
+}
+
+export function isImageQualityField(field: FieldSchema): boolean {
+  if (normalizedName(field.name) !== 'quality') return false
+  return (
+    field.enum?.some((v) =>
+      ['auto', 'low', 'medium', 'high', 'xhigh', 'max'].includes(v.toLowerCase()),
+    ) ?? false
+  )
+}
+
 export function presentField(field: FieldSchema): FieldSchema {
   if (isNsfwChecker(field)) return field
   const name = normalizedName(field.name)
+  if (name === 'background') {
+    const rawEnum = field.enum ?? []
+    const hasAuto = rawEnum.includes('auto')
+    const enumValues = hasAuto
+      ? ['auto', ...rawEnum.filter((opt) => opt !== 'auto')]
+      : rawEnum.length > 0
+        ? ['auto', ...rawEnum]
+        : ['auto', 'transparent', 'opaque']
+    return {
+      ...field,
+      label: field.label || 'Background',
+      default: 'auto',
+      enum: enumValues,
+    }
+  }
+  if (isImageQualityField(field)) {
+    const rawEnum = field.enum ?? []
+    const hasAuto = rawEnum.includes('auto')
+    const enumValues = hasAuto
+      ? ['auto', ...rawEnum.filter((opt) => opt !== 'auto')]
+      : ['auto', ...rawEnum]
+    return {
+      ...field,
+      label: 'Quality',
+      default: field.default ?? 'auto',
+      enum: enumValues,
+    }
+  }
   if (field.type === 'reference' && (name === 'input_url' || name === 'input_urls')) {
     const accept = field.accept ?? ''
     const label = /audio/i.test(accept)
@@ -98,6 +146,8 @@ export function shouldShowTechnicalDescription(field: FieldSchema): boolean {
 
 export function isAdvancedField(field: FieldSchema): boolean {
   if (field.required) return false
+  if (isEnhancePromptField(field)) return false
+  if (isImageQualityField(field)) return true
   const name = normalizedName(field.name)
   if (CORE_FIELD_NAMES.has(name)) return false
   if (

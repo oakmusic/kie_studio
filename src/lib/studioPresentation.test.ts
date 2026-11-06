@@ -3,6 +3,8 @@ import type { FieldSchema, ModelDefinition } from './models/types.ts'
 import {
   fieldConstraintHint,
   isAdvancedField,
+  isEnhancePromptField,
+  isImageQualityField,
   modelInputSummary,
   presentField,
 } from './studioPresentation.ts'
@@ -26,6 +28,40 @@ describe('studio presentation', () => {
     expect(isAdvancedField({ name: 'resolution', type: 'enum', label: 'Resolution' })).toBe(false)
     expect(isAdvancedField({ name: 'seed', type: 'number', label: 'Seed' })).toBe(true)
     expect(isAdvancedField({ name: 'steps', type: 'number', label: 'Steps', required: true })).toBe(false)
+    // Enhance Prompt is kept in basic options (not advanced)
+    expect(isAdvancedField({ name: 'enhance_prompt', type: 'boolean', label: 'Enhance Prompt' })).toBe(false)
+    expect(isEnhancePromptField({ name: 'enhance_prompt', type: 'boolean', label: 'Enhance Prompt' })).toBe(true)
+    // Background is an advanced option
+    expect(isAdvancedField({ name: 'background', type: 'enum', label: 'Background', enum: ['transparent', 'opaque', 'auto'] })).toBe(true)
+    // Image quality (OpenAI style) is an advanced option
+    const imageQuality: FieldSchema = {
+      name: 'quality',
+      type: 'enum',
+      label: 'Quality',
+      enum: ['auto', 'low', 'medium', 'high', 'xhigh', 'max'],
+    }
+    expect(isImageQualityField(imageQuality)).toBe(true)
+    expect(isAdvancedField(imageQuality)).toBe(true)
+  })
+
+  it('configures background and image quality with auto first and default auto', () => {
+    const bg = presentField({
+      name: 'background',
+      type: 'enum',
+      label: 'Background',
+      enum: ['transparent', 'opaque', 'auto'],
+    })
+    expect(bg.default).toBe('auto')
+    expect(bg.enum).toEqual(['auto', 'transparent', 'opaque'])
+
+    const quality = presentField({
+      name: 'quality',
+      type: 'enum',
+      label: 'Quality',
+      enum: ['low', 'medium', 'high', 'auto'],
+    })
+    expect(quality.default).toBe('auto')
+    expect(quality.enum).toEqual(['auto', 'low', 'medium', 'high'])
   })
 
   it('builds compact constraint and model input summaries', () => {
